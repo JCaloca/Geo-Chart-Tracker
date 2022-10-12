@@ -1,6 +1,24 @@
 const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
-const lastGMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what this is, just keeping it here in case I need it later.
+const lastFMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what this is, just keeping it here in case I need it later.
+
+/*
+ *  Displays the top artists for a particular country when given the data from a JSON request.
+ *  Inputs:
+ *      data:   A JSON object representing the data we get back from the last.fm API
+ */
+function displayCountryTopArtists(data) {
+    console.log("DISPLAYING TOP ARTISTS FOR "+data.topartists["@attr"].country.toUpperCase());
+}
+
+/*
+ *  Displays the top tracks for a particular country when given the data from a JSON request.
+ *  Inputs:
+ *      data:   A JSON object representing the data we get back from the last.fm API
+ */
+function displayCountryTopTracks(data) {
+    console.log("DISPLAYING TOP TRACKS FOR "+data.tracks["@attr"].country.toUpperCase());
+}
 
 /*
  *  Displays the global top artists when given the data from a JSON request.
@@ -8,7 +26,7 @@ const lastGMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what 
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayGlobalTopArtists(data) {
-    console.log("DISPLAYING TOP ARTISTS");
+    console.log("DISPLAYING GLOBAL TOP ARTISTS");
 }
 
 /*
@@ -17,7 +35,11 @@ function displayGlobalTopArtists(data) {
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayGlobalTopTracks(data) {
-    console.log("DISPLAYING TOP TRACKS");
+    console.log("DISPLAYING GLOBAL TOP TRACKS");
+}
+
+function displayMetroTopTracks() {
+
 }
 
 /*
@@ -26,7 +48,19 @@ function displayGlobalTopTracks(data) {
  *      countryName: The name of the country we are fetching data for as a string.
  */
 function fetchCountryTopArtists(countryName) {
+    var url = lastFMBaseURL+"?method=geo.gettopartists&country="+countryName+"&api_key="+lastFMApiKey+"&format=json";
 
+    fetch(url)
+    .then(function (response) {
+        console.log("response", response);
+
+        return response.json();
+    })
+    .then(function (data) {
+        console.log("data", data);
+
+        displayCountryTopArtists(data);
+    });
 }
 
 /*
@@ -35,7 +69,19 @@ function fetchCountryTopArtists(countryName) {
  *      countryName: The name of the country we are fetching data for as a string.
  */
 function fetchCountryTopTracks(countryName) {
+    var url = lastFMBaseURL+"?method=geo.gettoptracks&country="+countryName+"&api_key="+lastFMApiKey+"&format=json";
 
+    fetch(url)
+    .then(function (response) {
+        console.log("response", response);
+
+        return response.json();
+    })
+    .then(function (data) {
+        console.log("data", data);
+
+        displayCountryTopTracks(data);
+    });
 }
 
 /*
@@ -44,8 +90,20 @@ function fetchCountryTopTracks(countryName) {
  *      countryName:    The name of the country we are fetching data for as a string.
  *      metroName:      The name of the city we are fetching data for as a string.
  */
-function fetchMetroTopTracks(cityName, metroName) {
+function fetchMetroTopTracks(countryName, metroName) {
+    var url = lastFMBaseURL+"?method=geo.gettoptracks&country="+countryName+"&location="+metroName+"&api_key="+lastFMApiKey+"&format=json"
 
+    fetch(url)
+    .then(function (response) {
+        console.log("response", response);
+
+        return response.json();
+    })
+    .then(function (data) {
+        console.log("data", data);
+
+        displayMetroTopTracks(data);
+    });
 }
 
 /*
