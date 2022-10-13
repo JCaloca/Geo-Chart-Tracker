@@ -2,6 +2,8 @@ const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
 const lastFMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what this is, just keeping it here in case I need it later.
 
+const napsterAPIKey = "NTMwMDZlMDYtNjBjMi00Y2JjLTgyNzUtZTY3Mzk4ZWQ1ODVm";
+
 /*
  *  Displays the top artists for a particular country when given the data from a JSON request.
  *  Inputs:
@@ -65,6 +67,13 @@ function displayGlobalTopTracks(trackData) {
         // console.log(trackData.tracks.track[i].artist.name);
     }
 };
+
+/*
+ *  
+ */
+function fetchImageForArtist(artistName) {
+
+}
 
 /*
  *  Fetches the top artists by country name.
