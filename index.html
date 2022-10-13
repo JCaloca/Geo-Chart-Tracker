@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=no"">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0
+    maximum-scale=1.0, user-scalable=no"">
+
     <link
       rel=" stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
     integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
-
   <link rel="stylesheet" href="./assets/style.css" />
   <title>Document</title>
 </head>
+
+  <body>
+    <header class="is-flex is-justify-content-center is-align-items-center">
+      <h1 class="title is-1 has-text-weight-bold has-text-white">
+        Geo Chart Tracker
+      </h1>
+    </header>
+    <div id="map"></div>
+    <section id="charts" class="box column">
+      <ul id="tracksDisplay" class="column table"></ul>
+
+      
+    </section>
+
 
 <body>
   <header class="is-flex is-justify-content-center is-align-items-center">
@@ -30,7 +45,14 @@
         </tr>
       </thead>
     </table>
-    <ul id="artistDisplay" class="column"></ul>
+    <table id="artistDisplay" class="column">
+        <thead>
+          <tr>
+            <th><abbr title="Position">Pos</abbr></th>
+            <tr>Top Artists</tr>
+          </tr>
+        </thead>
+      </table>      
   </section>
 
   <table class="table">
