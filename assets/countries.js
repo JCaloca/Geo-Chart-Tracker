@@ -2626,7 +2626,7 @@ var countriesDATA = {
                 "subunit": "United States",
                 "su_a3": "USA",
                 "brk_diff": 0,
-                "name": "United States of America",
+                "name": "United States",
                 "name_long": "United States",
                 "brk_a3": "USA",
                 "brk_name": "United States",

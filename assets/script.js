@@ -7,8 +7,23 @@ const lastGMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what 
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
-function displayGlobalTopArtists(data) {
+function displayGlobalTopArtists(artistData) {
     console.log("DISPLAYING TOP ARTISTS");
+    var charts = document.getElementById("charts");
+    var artist = document.getElementById("artistDisplay");
+    artist.innerHTML = "";
+    artist.innerText = "Top 10 Hottest Artist:";
+    for (var i = 0; i < 10; i++) {
+        var artistList = document.createElement("li");
+        artistList.innerText = artistData.topartists.artist[i].name
+        artistList.setAttribute("data-artist", "Top-" + (i + 1));
+        // var artistPng = document.createElement("img")
+        // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
+        // artistList.appendChild(artistPng);
+        // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
+        //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
+        artist.appendChild(artistList);
+    }
 }
 
 /*
@@ -16,8 +31,19 @@ function displayGlobalTopArtists(data) {
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
-function displayGlobalTopTracks(data) {
+function displayGlobalTopTracks(trackData) {
     console.log("DISPLAYING TOP TRACKS");
+    var tracks = document.getElementById("tracksDisplay");
+    tracks.innerHTML = "";
+    tracks.innerText = "Top 10 Hottest Tracks:";
+    for (var i = 0; i < 10; i++) {
+        var trackList = document.createElement("li");
+        trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
+        trackList.setAttribute("data-track", "Top-" + i);
+        tracks.appendChild(trackList);
+        // console.log(trackData.tracks.track[i].name);
+        // console.log(trackData.tracks.track[i].artist.name);
+    }
 }
 
 /*
@@ -26,8 +52,20 @@ function displayGlobalTopTracks(data) {
  *      countryName: The name of the country we are fetching data for as a string.
  */
 function fetchCountryTopArtists(countryName) {
+    var url = lastFMBaseURL + "?method=geo.gettopartists&country=" + clickedCountry + "&api_key=" + lastFMApiKey + "&format=json";
 
-}
+    fetch(url)
+        .then(function (response) {
+            console.log("response", response);
+
+            return response.json();
+        })
+        .then(function (data) {
+            console.log("data", data);
+
+            displayGlobalTopArtists(data);
+        });
+};
 
 /*
  *  Fetches the top tracks by country name.
@@ -35,7 +73,19 @@ function fetchCountryTopArtists(countryName) {
  *      countryName: The name of the country we are fetching data for as a string.
  */
 function fetchCountryTopTracks(countryName) {
+    var url = lastFMBaseURL + "?method=geo.gettoptracks&country=" + clickedCountry + "&api_key=" + lastFMApiKey + "&format=json";
 
+    fetch(url)
+        .then(function (response) {
+            console.log("response", response);
+
+            return response.json();
+        })
+        .then(function (data) {
+            console.log("data", data);
+
+            displayGlobalTopTracks(data);
+        });
 }
 
 /*
@@ -100,7 +150,7 @@ var worldjsonPath = "./assets/custom.geo.json"
 
 var map = L.map('map').setView([51.505, -0.09], 2);
 map.createPane('labels');
-map.getPane('labels').style.zIndex = 650;
+map.getPane('labels').style.zIndex = 650;//always in the front
 map.getPane('labels').style.pointerEvents = 'none';
 var clickedCountry; //adding this so we can pass the city clicked to the fetch function
 // import { worldCountries } from "./custom.geo.js";
@@ -119,13 +169,16 @@ var positronLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_l
     pane: 'labels'
 }).addTo(map);
 
-var geojson = L.geoJson(countriesDATA).addTo(map);
+var geojson = L.geoJson(countriesDATA).addTo(map);//loading the containers and adding it to our map
 geojson.eachLayer(function (layer) {
     layer.bindPopup(layer.feature.properties.name).on('click', function (e) { //adding leaflet event to zoom in at the countries
         map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 4);
-        clickedCountry = layer.feature.properties.iso_a3;
-        //iso_n3: 3 digit code, iso_a3: 3 character code//
-        console.log(clickedCountry);
+        clickedCountry = layer.feature.properties.name;
+        //name // iso_n3: 3 digit code // iso_a3: 3 character code//
+        console.log(clickedCountry);//sucessfully getting the country code
+        var trackData = fetchCountryTopTracks(clickedCountry);//fetchingTop Tracks using country code
+        var artistData = fetchCountryTopArtists(clickedCountry);//fetchingTop Artist using country code
+
     });
     // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
     // console.log("test");
