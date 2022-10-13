@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=no"">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0
+    maximum-scale=1.0, user-scalable=no"">
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
@@ -28,8 +28,16 @@
     </header>
     <div id="map"></div>
     <section id="charts" class="box column">
-      <ul id="tracksDisplay" class="column"></ul>
-      <ul id="artistDisplay" class="column"></ul>
+      <ul id="tracksDisplay" class="column table"></ul>
+
+      <table id="artistDisplay" class="column">
+        <thead>
+          <tr>
+            <th><abbr title="Position">Pos</abbr></th>
+            <tr>Top Artists</tr>
+          </tr>
+        </thead>
+      </table>      
     </section>
 
     <table class="table">
