@@ -12,31 +12,12 @@ const spotifyClientSecret = "c465fe59764440a79b727fd65af86bd9";
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
-function displayCountryTopArtists(data) {
-    console.log("DISPLAYING TOP ARTISTS FOR " + data.topartists["@attr"].country.toUpperCase());
-}
-
-/*
- *  Displays the top tracks for a particular country when given the data from a JSON request.
- *  Inputs:
- *      data:   A JSON object representing the data we get back from the last.fm API
- */
-function displayCountryTopTracks(data) {
-    console.log("DISPLAYING TOP TRACKS FOR " + data.tracks["@attr"].country.toUpperCase());
-}
-
-/*
- *  Displays the global top artists when given the data from a JSON request.
- *  Inputs:
- *      data:   A JSON object representing the data we get back from the last.fm API
- */
-
-function displayGlobalTopArtists(artistData) {
-    console.log("DISPLAYING TOP ARTISTS");
+function displayCountryTopArtists(artistData) {
+    console.log("DISPLAYING TOP ARTISTS FOR " + artistData.topartists["@attr"].country.toUpperCase());
     var charts = document.getElementById("charts");
     var artist = document.getElementById("artistDisplay");
     artist.innerHTML = "";
-    artist.innerText = "Top 10 Hottest Artist:";
+    artist.innerText = "Top 10 ARTISTS FOR " + artistData.topartists["@attr"].country.toUpperCase();
     for (var i = 0; i < 10; i++) {
         var artistList = document.createElement("li");
         artistList.innerText = artistData.topartists.artist[i].name
@@ -48,24 +29,66 @@ function displayGlobalTopArtists(artistData) {
         //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
         artist.appendChild(artistList);
     }
-};
+}
 
 /*
- *  Displays the global top tracks when given the data from a JSON request.
+ *  Displays the top tracks for a particular country when given the data from a JSON request.
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
-
-function displayGlobalTopTracks(trackData) {
-    console.log("DISPLAYING TOP TRACKS");
+function displayCountryTopTracks(trackData) {
+    console.log("DISPLAYING TOP TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase());
     var tracks = document.getElementById("tracksDisplay");
     tracks.innerHTML = "";
-    tracks.innerText = "Top 10 Hottest Tracks:";
+    tracks.innerText = "Top 10 TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase();
     for (var i = 0; i < 10; i++) {
         var trackList = document.createElement("li");
         trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
         trackList.setAttribute("data-track", "Top-" + i);
         tracks.appendChild(trackList);
+    }
+
+    /*
+     *  Displays the global top artists when given the data from a JSON request.
+     *  Inputs:
+     *      data:   A JSON object representing the data we get back from the last.fm API
+     */
+
+    function displayGlobalTopArtists(artistData) {
+        console.log("DISPLAYING TOP ARTISTS");
+        // var charts = document.getElementById("charts");
+        // var artist = document.getElementById("artistDisplay");
+        // artist.innerHTML = "";
+        // artist.innerText = "Top 10 Hottest Artist:";
+        // for (var i = 0; i < 10; i++) {
+        //     var artistList = document.createElement("li");
+        //     artistList.innerText = artistData.topartists.artist[i].name
+        //     artistList.setAttribute("data-artist", "Top-" + (i + 1));
+        //     // var artistPng = document.createElement("img")
+        //     // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
+        //     // artistList.appendChild(artistPng);
+        //     // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
+        //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
+        //     artist.appendChild(artistList);
+        // }
+    };
+
+    /*
+     *  Displays the global top tracks when given the data from a JSON request.
+     *  Inputs:
+     *      data:   A JSON object representing the data we get back from the last.fm API
+     */
+
+    function displayGlobalTopTracks(trackData) {
+        console.log("DISPLAYING TOP TRACKS");
+        // var tracks = document.getElementById("tracksDisplay");
+        // tracks.innerHTML = "";
+        // tracks.innerText = "Top 10 Hottest Tracks:";
+        // for (var i = 0; i < 10; i++) {
+        //     var trackList = document.createElement("li");
+        //     trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
+        //     trackList.setAttribute("data-track", "Top-" + i);
+        //     tracks.appendChild(trackList);
         // console.log(trackData.tracks.track[i].name);
         // console.log(trackData.tracks.track[i].artist.name);
     }
@@ -111,16 +134,16 @@ function fetchCountryTopArtists(countryName) {
     var url = lastFMBaseURL + "?method=geo.gettopartists&country=" + countryName + "&api_key=" + lastFMApiKey + "&format=json";
 
     fetch(url)
-    .then(function (response) {
-        console.log("response", response);
+        .then(function (response) {
+            console.log("response", response);
 
-        return response.json();
-    })
-    .then(function (data) {
-        console.log("data", data);
+            return response.json();
+        })
+        .then(function (data) {
+            console.log("data", data);
 
-        displayCountryTopArtists(data);
-    });
+            displayCountryTopArtists(data);
+        });
 }
 
 
@@ -141,7 +164,7 @@ function fetchCountryTopTracks(countryName) {
         .then(function (data) {
             console.log("data", data);
 
-            displayGlobalTopTracks(data);
+            displayCountryTopTracks(data);
         });
 }
 
@@ -205,7 +228,7 @@ function fetchGlobalTopTracks() {
         });
 }
 
-var worldjsonPath = "./assets/custom.geo.json"
+// var worldjsonPath = "./assets/custom.geo.json"
 // function getJSON(worldjsonPath) {
 //     fetch(worldjsonPath)
 //         .then(function (data) {
@@ -217,10 +240,16 @@ var worldjsonPath = "./assets/custom.geo.json"
 
 // getJSON(worldjsonPath);
 
-var map = L.map('map').setView([51.505, -0.09], 2);
+var map = L.map('map', {
+    center: [0, 0],
+    maxZoom: 4,
+});
+map.setMaxBounds([[-85.0511, -180], [85.0511, 180]]);
+map.fitWorld();
 map.createPane('labels');
 map.getPane('labels').style.zIndex = 650;//always in the front
 map.getPane('labels').style.pointerEvents = 'none';
+L.control.scale({ 'position': 'bottomleft', 'metric': true, 'imperial': false }).addTo(map);
 var countryName; //adding this so we can pass the city clicked to the fetch function
 // import { worldCountries } from "./custom.geo.js";
 // var worldGeoJSON = "./assets/custom.geo.json";
@@ -230,11 +259,19 @@ var countryName; //adding this so we can pass the city clicked to the fetch func
 //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 // }).addTo(map);
 var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
-    attribution: '©OpenStreetMap, ©CartoDB'
+    attribution: '©OpenStreetMap, ©CartoDB',
+    continuousWorld: false,
+    // noWrap: true,
+    // Bounds: [[-85.0511, -180], [85.0511, 180]],
+    // maxZoom: 4
 }).addTo(map);
 
 var positronLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
     attribution: '©OpenStreetMap, ©CartoDB',
+    continuousWorld: false,
+    // noWrap: true,
+    // Bounds: [[-85.0511, -180], [85.0511, 180]],
+    // maxZoom: 4,
     pane: 'labels'
 }).addTo(map);
 
