@@ -61,7 +61,7 @@ function displayCountryTopTracks(trackData) {
         trackList.setAttribute("data-track", "Top-" + i);
         tracks.appendChild(trackList);
     }
-
+  }
     /*
      *  Displays the global top artists when given the data from a JSON request.
      *  Inputs:
@@ -106,25 +106,6 @@ function displayCountryTopTracks(trackData) {
         // console.log(trackData.tracks.track[i].name);
         // console.log(trackData.tracks.track[i].artist.name);
     }
-};
-
-  console.log(
-    "DISPLAYING TOP TRACKS FOR " +
-      trackData.tracks["@attr"].country.toUpperCase()
-  );
-  var tracks = document.getElementById("tracksDisplay");
-  tracks.innerHTML = "";
-  tracks.innerText =
-    "Top 10 TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase();
-  for (var i = 0; i < 10; i++) {
-    var trackList = document.createElement("li");
-    trackList.innerText =
-      trackData.tracks.track[i].name +
-      " By: " +
-      trackData.tracks.track[i].artist.name;
-    trackList.setAttribute("data-track", "Top-" + i);
-    tracks.appendChild(trackList);
-  }
 
   /*
    *  Displays the global top artists when given the data from a JSON request.
@@ -170,8 +151,6 @@ function displayCountryTopTracks(trackData) {
     // console.log(trackData.tracks.track[i].name);
     // console.log(trackData.tracks.track[i].artist.name);
   }
-}
-
 
 /*
  *  Fetches the ID of the artist given the artistName, so that we can use that ID to get an image of the artist.
