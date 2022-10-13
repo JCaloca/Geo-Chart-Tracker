@@ -110,38 +110,38 @@ function fetchMetroTopTracks(countryName, metroName) {
  *  Fetches the global top artists.
  */
 function fetchGlobalTopArtists() {
-    var url = lastFMBaseURL+"?method=chart.gettopartists&api_key="+lastFMApiKey+"&format=json";
+    var url = lastFMBaseURL + "?method=chart.gettopartists&api_key=" + lastFMApiKey + "&format=json";
 
     fetch(url)
-    .then(function (response) {
-        console.log("response", response);
+        .then(function (response) {
+            console.log("response", response);
 
-        return response.json();
-    })
-    .then(function (data) {
-        console.log("data", data);
+            return response.json();
+        })
+        .then(function (data) {
+            console.log("data", data);
 
-        displayGlobalTopArtists(data);
-    });
+            displayGlobalTopArtists(data);
+        });
 }
 
 /*
  *  Fetches the global top tracks.
  */
 function fetchGlobalTopTracks() {
-    var url = lastFMBaseURL+"?method=chart.gettoptracks&api_key="+lastFMApiKey+"&format=json";
+    var url = lastFMBaseURL + "?method=chart.gettoptracks&api_key=" + lastFMApiKey + "&format=json";
 
     fetch(url)
-    .then(function (response) {
-        console.log("response", response);
+        .then(function (response) {
+            console.log("response", response);
 
-        return response.json();
-    })
-    .then(function (data) {
-        console.log("data", data);
+            return response.json();
+        })
+        .then(function (data) {
+            console.log("data", data);
 
-        displayGlobalTopTracks(data);
-    });
+            displayGlobalTopTracks(data);
+        });
 }
 
 var worldjsonPath = "./assets/custom.geo.json"
@@ -160,6 +160,7 @@ var map = L.map('map').setView([51.505, -0.09], 2);
 map.createPane('labels');
 map.getPane('labels').style.zIndex = 650;
 map.getPane('labels').style.pointerEvents = 'none';
+var clickedCountry; //adding this so we can pass the city clicked to the fetch function
 // import { worldCountries } from "./custom.geo.js";
 // var worldGeoJSON = "./assets/custom.geo.json";
 //sample stree colored map
@@ -178,7 +179,14 @@ var positronLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_l
 
 var geojson = L.geoJson(countriesDATA).addTo(map);
 geojson.eachLayer(function (layer) {
-    layer.bindPopup(layer.feature.properties.name);
+    layer.bindPopup(layer.feature.properties.name).on('click', function (e) { //adding leaflet event to zoom in at the countries
+        map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 4);
+        clickedCountry = layer.feature.properties.iso_a3;
+        //iso_n3: 3 digit code, iso_a3: 3 character code//
+        console.log(clickedCountry);
+    });
+    // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
+    // console.log("test");
 });
 
 map.fitBounds(geojson.getBounds());
