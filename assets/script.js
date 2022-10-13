@@ -72,7 +72,6 @@ function displayGlobalTopTracks(trackData) {
  *      countryName: The name of the country we are fetching data for as a string.
  */
 function fetchCountryTopArtists(countryName) {
-
     var url = lastFMBaseURL + "?method=geo.gettopartists&country=" + countryName + "&api_key=" + lastFMApiKey + "&format=json";
 
     fetch(url)
@@ -87,6 +86,18 @@ function fetchCountryTopArtists(countryName) {
             displayGlobalTopArtists(data);
         });
 };
+    fetch(url)
+    .then(function (response) {
+        console.log("response", response);
+
+        return response.json();
+    })
+    .then(function (data) {
+        console.log("data", data);
+
+        displayCountryTopArtists(data);
+    });
+}
 
 /*
  *  Fetches the top tracks by country name.
@@ -94,6 +105,16 @@ function fetchCountryTopArtists(countryName) {
  *      countryName: The name of the country we are fetching data for as a string.
  */
 function fetchCountryTopTracks(countryName) {
+    var url = lastFMBaseURL+"?method=geo.gettoptracks&country="+countryName+"&api_key="+lastFMApiKey+"&format=json";
+
+    fetch(url)
+    .then(function (response) {
+        console.log("response", response);
+
+        return response.json();
+    })
+    .then(function (data) {
+        console.log("data", data);
 
     var url = lastFMBaseURL + "?method=geo.gettoptracks&country=" + countryName + "&api_key=" + lastFMApiKey + "&format=json";
 
