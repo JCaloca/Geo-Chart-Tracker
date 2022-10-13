@@ -37,8 +37,9 @@ function displayCountryTopTracks(trackData) {
     tracks.innerHTML = "";
     tracks.innerText = "Top 10 TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase();
     for (var i = 0; i < 10; i++) {
-        var trackList = document.createElement("li");
-        trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
+        var trackList = document.createElement("tbody");
+        trackList.innerHTML = "<tr> <th>" + (i + 1) + "</th> <td> <p>" + trackData.tracks.track[i].name + "-by "+ trackData.tracks.track[i].artist.name +"</p> </td> </tr>"
+        // trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
         trackList.setAttribute("data-track", "Top-" + i);
         tracks.appendChild(trackList);
     }
