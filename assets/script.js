@@ -2,6 +2,11 @@ const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
 const lastFMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what this is, just keeping it here in case I need it later.
 
+const bandsInTownApiKey = "codingbootcamp";
+
+const spotifyClientID = "27b52f6caffb4a35a8a4d0e4b70d0750";
+const spotifyClientSecret = "c465fe59764440a79b727fd65af86bd9";
+
 /*
  *  Displays the top artists for a particular country when given the data from a JSON request.
  *  Inputs:
@@ -88,6 +93,37 @@ function displayCountryTopTracks(trackData) {
         // console.log(trackData.tracks.track[i].artist.name);
     }
 };
+
+/*
+ *  Fetches the ID of the artist given the artistName, so that we can use that ID to get an image of the artist.
+ *  This function uses the Bands In Town API:
+ *  https://rest.bandsintown.com/artists/
+ * 
+ *  NOTE: We only need to use the Bands In Town API as the last.fm API does not include any images for the artist/track. All image links
+ *  last.fm gives are just placeholder stars.
+ * 
+ *  RETURNS: The url to the image of the artist.
+ * 
+ *  INPUTS: The name of the artist in the form of a string.
+ */
+function fetchArtistImageURL(artistName) {
+    var url = "https://rest.bandsintown.com/artists/"+artistName+"?app_id="+bandsInTownApiKey;
+
+    fetch(url)
+    .then(function (response) {
+        console.log("response", response);
+
+        return response.json();
+    })
+    .then(function (data) {
+        console.log("data", data);
+
+        var imageURL = data.thumb_url;
+        //console.log(imageURL);
+
+        return imageURL;
+    });
+}
 
 /*
  *  Fetches the top artists by country name.
@@ -255,4 +291,3 @@ geojson.eachLayer(function (layer) {
 });
 
 map.fitBounds(geojson.getBounds());
-
