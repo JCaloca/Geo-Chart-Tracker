@@ -49,6 +49,65 @@ function displayCountryTopArtists(artistData) {
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayCountryTopTracks(trackData) {
+
+    console.log("DISPLAYING TOP TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase());
+    var tracks = document.getElementById("tracksDisplay");
+    tracks.innerHTML = "";
+    tracks.innerText = "Top 10 TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase();
+    for (var i = 0; i < 10; i++) {
+        var trackList = document.createElement("tbody");
+        trackList.innerHTML = "<tr> <th>" + (i + 1) + "</th> <td> <p>" + trackData.tracks.track[i].name + "-by "+ trackData.tracks.track[i].artist.name +"</p> </td> </tr>"
+        // trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
+        trackList.setAttribute("data-track", "Top-" + i);
+        tracks.appendChild(trackList);
+    }
+
+    /*
+     *  Displays the global top artists when given the data from a JSON request.
+     *  Inputs:
+     *      data:   A JSON object representing the data we get back from the last.fm API
+     */
+
+    function displayGlobalTopArtists(artistData) {
+        console.log("DISPLAYING TOP ARTISTS");
+        // var charts = document.getElementById("charts");
+        // var artist = document.getElementById("artistDisplay");
+        // artist.innerHTML = "";
+        // artist.innerText = "Top 10 Hottest Artist:";
+        // for (var i = 0; i < 10; i++) {
+        //     var artistList = document.createElement("li");
+        //     artistList.innerText = artistData.topartists.artist[i].name
+        //     artistList.setAttribute("data-artist", "Top-" + (i + 1));
+        //     // var artistPng = document.createElement("img")
+        //     // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
+        //     // artistList.appendChild(artistPng);
+        //     // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
+        //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
+        //     artist.appendChild(artistList);
+        // }
+    };
+
+    /*
+     *  Displays the global top tracks when given the data from a JSON request.
+     *  Inputs:
+     *      data:   A JSON object representing the data we get back from the last.fm API
+     */
+
+    function displayGlobalTopTracks(trackData) {
+        console.log("DISPLAYING TOP TRACKS");
+        // var tracks = document.getElementById("tracksDisplay");
+        // tracks.innerHTML = "";
+        // tracks.innerText = "Top 10 Hottest Tracks:";
+        // for (var i = 0; i < 10; i++) {
+        //     var trackList = document.createElement("li");
+        //     trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
+        //     trackList.setAttribute("data-track", "Top-" + i);
+        //     tracks.appendChild(trackList);
+        // console.log(trackData.tracks.track[i].name);
+        // console.log(trackData.tracks.track[i].artist.name);
+    }
+};
+
   console.log(
     "DISPLAYING TOP TRACKS FOR " +
       trackData.tracks["@attr"].country.toUpperCase()
@@ -112,6 +171,7 @@ function displayCountryTopTracks(trackData) {
     // console.log(trackData.tracks.track[i].artist.name);
   }
 }
+
 
 /*
  *  Fetches the ID of the artist given the artistName, so that we can use that ID to get an image of the artist.
