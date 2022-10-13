@@ -1,12 +1,31 @@
 const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
-const lastGMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what this is, just keeping it here in case I need it later.
+const lastFMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what this is, just keeping it here in case I need it later.
+
+/*
+ *  Displays the top artists for a particular country when given the data from a JSON request.
+ *  Inputs:
+ *      data:   A JSON object representing the data we get back from the last.fm API
+ */
+function displayCountryTopArtists(data) {
+    console.log("DISPLAYING TOP ARTISTS FOR " + data.topartists["@attr"].country.toUpperCase());
+}
+
+/*
+ *  Displays the top tracks for a particular country when given the data from a JSON request.
+ *  Inputs:
+ *      data:   A JSON object representing the data we get back from the last.fm API
+ */
+function displayCountryTopTracks(data) {
+    console.log("DISPLAYING TOP TRACKS FOR " + data.tracks["@attr"].country.toUpperCase());
+}
 
 /*
  *  Displays the global top artists when given the data from a JSON request.
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
+
 function displayGlobalTopArtists(artistData) {
     console.log("DISPLAYING TOP ARTISTS");
     var charts = document.getElementById("charts");
@@ -24,13 +43,14 @@ function displayGlobalTopArtists(artistData) {
         //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
         artist.appendChild(artistList);
     }
-}
+};
 
 /*
  *  Displays the global top tracks when given the data from a JSON request.
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
+
 function displayGlobalTopTracks(trackData) {
     console.log("DISPLAYING TOP TRACKS");
     var tracks = document.getElementById("tracksDisplay");
@@ -44,7 +64,7 @@ function displayGlobalTopTracks(trackData) {
         // console.log(trackData.tracks.track[i].name);
         // console.log(trackData.tracks.track[i].artist.name);
     }
-}
+};
 
 /*
  *  Fetches the top artists by country name.
@@ -52,7 +72,8 @@ function displayGlobalTopTracks(trackData) {
  *      countryName: The name of the country we are fetching data for as a string.
  */
 function fetchCountryTopArtists(countryName) {
-    var url = lastFMBaseURL + "?method=geo.gettopartists&country=" + clickedCountry + "&api_key=" + lastFMApiKey + "&format=json";
+
+    var url = lastFMBaseURL + "?method=geo.gettopartists&country=" + countryName + "&api_key=" + lastFMApiKey + "&format=json";
 
     fetch(url)
         .then(function (response) {
@@ -73,7 +94,8 @@ function fetchCountryTopArtists(countryName) {
  *      countryName: The name of the country we are fetching data for as a string.
  */
 function fetchCountryTopTracks(countryName) {
-    var url = lastFMBaseURL + "?method=geo.gettoptracks&country=" + clickedCountry + "&api_key=" + lastFMApiKey + "&format=json";
+
+    var url = lastFMBaseURL + "?method=geo.gettoptracks&country=" + countryName + "&api_key=" + lastFMApiKey + "&format=json";
 
     fetch(url)
         .then(function (response) {
@@ -94,8 +116,20 @@ function fetchCountryTopTracks(countryName) {
  *      countryName:    The name of the country we are fetching data for as a string.
  *      metroName:      The name of the city we are fetching data for as a string.
  */
-function fetchMetroTopTracks(cityName, metroName) {
+function fetchMetroTopTracks(countryName, metroName) {
+    var url = lastFMBaseURL + "?method=geo.gettoptracks&country=" + countryName + "&location=" + metroName + "&api_key=" + lastFMApiKey + "&format=json"
 
+    fetch(url)
+        .then(function (response) {
+            console.log("response", response);
+
+            return response.json();
+        })
+        .then(function (data) {
+            console.log("data", data);
+
+            displayMetroTopTracks(data);
+        });
 }
 
 /*
@@ -152,7 +186,7 @@ var map = L.map('map').setView([51.505, -0.09], 2);
 map.createPane('labels');
 map.getPane('labels').style.zIndex = 650;//always in the front
 map.getPane('labels').style.pointerEvents = 'none';
-var clickedCountry; //adding this so we can pass the city clicked to the fetch function
+var countryName; //adding this so we can pass the city clicked to the fetch function
 // import { worldCountries } from "./custom.geo.js";
 // var worldGeoJSON = "./assets/custom.geo.json";
 //sample stree colored map
@@ -173,11 +207,11 @@ var geojson = L.geoJson(countriesDATA).addTo(map);//loading the containers and a
 geojson.eachLayer(function (layer) {
     layer.bindPopup(layer.feature.properties.name).on('click', function (e) { //adding leaflet event to zoom in at the countries
         map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 4);
-        clickedCountry = layer.feature.properties.name;
+        countryName = layer.feature.properties.name;
         //name // iso_n3: 3 digit code // iso_a3: 3 character code//
-        console.log(clickedCountry);//sucessfully getting the country code
-        var trackData = fetchCountryTopTracks(clickedCountry);//fetchingTop Tracks using country code
-        var artistData = fetchCountryTopArtists(clickedCountry);//fetchingTop Artist using country code
+        console.log(countryName);//sucessfully getting the country code
+        var trackData = fetchCountryTopTracks(countryName);//fetchingTop Tracks using country code
+        var artistData = fetchCountryTopArtists(countryName);//fetchingTop Artist using country code
 
     });
     // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
@@ -185,5 +219,3 @@ geojson.eachLayer(function (layer) {
 });
 
 map.fitBounds(geojson.getBounds());
-
-
