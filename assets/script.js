@@ -192,7 +192,7 @@ function fetchGlobalTopTracks() {
         });
 }
 
-var worldjsonPath = "./assets/custom.geo.json"
+// var worldjsonPath = "./assets/custom.geo.json"
 // function getJSON(worldjsonPath) {
 //     fetch(worldjsonPath)
 //         .then(function (data) {
@@ -204,10 +204,16 @@ var worldjsonPath = "./assets/custom.geo.json"
 
 // getJSON(worldjsonPath);
 
-var map = L.map('map').setView([0, 0], 6);
+var map = L.map('map', {
+    center: [0, 0],
+    maxZoom: 4,
+});
+map.setMaxBounds([[-85.0511, -180], [85.0511, 180]]);
+map.fitWorld();
 map.createPane('labels');
 map.getPane('labels').style.zIndex = 650;//always in the front
 map.getPane('labels').style.pointerEvents = 'none';
+L.control.scale({ 'position': 'bottomleft', 'metric': true, 'imperial': false }).addTo(map);
 var countryName; //adding this so we can pass the city clicked to the fetch function
 // import { worldCountries } from "./custom.geo.js";
 // var worldGeoJSON = "./assets/custom.geo.json";
@@ -217,11 +223,19 @@ var countryName; //adding this so we can pass the city clicked to the fetch func
 //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 // }).addTo(map);
 var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
-    attribution: '©OpenStreetMap, ©CartoDB'
+    attribution: '©OpenStreetMap, ©CartoDB',
+    continuousWorld: false,
+    // noWrap: true,
+    // Bounds: [[-85.0511, -180], [85.0511, 180]],
+    // maxZoom: 4
 }).addTo(map);
 
 var positronLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
     attribution: '©OpenStreetMap, ©CartoDB',
+    continuousWorld: false,
+    // noWrap: true,
+    // Bounds: [[-85.0511, -180], [85.0511, 180]],
+    // maxZoom: 4,
     pane: 'labels'
 }).addTo(map);
 
@@ -241,3 +255,4 @@ geojson.eachLayer(function (layer) {
 });
 
 map.fitBounds(geojson.getBounds());
+
