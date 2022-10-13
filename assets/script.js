@@ -2,7 +2,8 @@ const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
 const lastFMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what this is, just keeping it here in case I need it later.
 
-const napsterAPIKey = "NTMwMDZlMDYtNjBjMi00Y2JjLTgyNzUtZTY3Mzk4ZWQ1ODVm";
+const spotifyClientID = "27b52f6caffb4a35a8a4d0e4b70d0750";
+const spotifyClientSecret = "c465fe59764440a79b727fd65af86bd9";
 
 /*
  *  Displays the top artists for a particular country when given the data from a JSON request.
@@ -69,9 +70,18 @@ function displayGlobalTopTracks(trackData) {
 };
 
 /*
- *  
+ *  Fetches the ID of the artist given the artistName, so that we can use that ID to get an image of the artist.
+ *  This function uses the Spotify API:
+ *  https://developer.spotify.com/documentation/web-api/reference/
+ * 
+ *  NOTE: We only need to use the Spotify API as the last.fm API does not include any images for the artist/track. All image links
+ *  last.fm gives are just placeholder stars.
+ * 
+ *  RETURNS: The artist ID native to the Spotify API in the form of a string.
+ * 
+ *  INPUTS: The name of the artist in the form of a string.
  */
-function fetchImageForArtist(artistName) {
+function fetchArtistID(artistName) {
 
 }
 
@@ -227,3 +237,21 @@ geojson.eachLayer(function (layer) {
 });
 
 map.fitBounds(geojson.getBounds());
+
+var authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    headers: {
+      'Authorization': 'Basic ' + (new Buffer(spotifyClientID + ':' + spotifyClientSecret).toString('base64'))
+    },
+    form: {
+      grant_type: 'client_credentials'
+    },
+    json: true
+  };
+  
+  request.post(authOptions, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      var token = body.access_token;
+      console.log(response);
+    }
+  });
