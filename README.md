@@ -69,7 +69,7 @@ Mari Ma
 - [Github](https://github.com/DraconMarius)
 
 Preston Ramsey
-- [Github](https://github.com/PRamsey02?tab=repositories)
+- [Github](https://github.com/PRamsey02)
 
 Jacob Caloca
 - [Github](https://github.com/JCaloca)
