@@ -19,12 +19,14 @@ function displayCountryTopArtists(artistData) {
   var charts = document.getElementById("chart");
   var artist = document.getElementById("chart-table");
   var modal = document.getElementById("alert");
-  artist.innerHTML = ""; //clearing the box ahead of time. 
-  modal.innerHTML = "<button id='close' class='modal-close is-large' aria-label='close'></button>";//resetting modal box for next pop up with just the button
+  artist.innerHTML = ""; //clearing the box ahead of time.
+  modal.innerHTML =
+    "<button id='close' class='modal-close is-large' aria-label='close'></button>"; //resetting modal box for next pop up with just the button
   // modal.style.zIndex = "650"; // our map ended up has to be set 649 to get this to layer on top
 
   //if artistData is returning a error
-  if (artistData.error) { //not last.fm supported
+  if (artistData.error) {
+    //not last.fm supported
     var modalCont = document.createElement("div");
     var modalBack = document.createElement("div");
     var mapCont = document.getElementById("map");
@@ -32,14 +34,15 @@ function displayCountryTopArtists(artistData) {
     charts.classList.add("is-invisible"); //get rid of charts durring pop up
     modalCont.classList.add("modal-content"); // bulma modal content class
     modalBack.classList.add("modal-background", "has-background-dark");
-    modalCont.innerHTML = "<p class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to this country's data. Feel free to click on another country! <p>";
+    modalCont.innerHTML =
+      "<p class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to this country's data. Feel free to click on another country! <p>";
     modal.prepend(modalCont); // add it to our hard-coded html box, before the button on 25
     modal.prepend(modalBack); // almost missed the background
     modal.classList.add("is-active");
 
     //function to be execute when close btn is clicked.
     //needed to delegate cuz generated btn
-    document.addEventListener('click', function (e) {
+    document.addEventListener("click", function (e) {
       var modal = document.getElementById("alert");
       var mapCont = document.getElementById("map");
       if (e.target.id === "close") {
@@ -48,19 +51,18 @@ function displayCountryTopArtists(artistData) {
         mapCont.classList.remove("is-invisible");
         charts.classList.remove("is-invisible");
       }
-    }
-    );
-
-  } else { //if not error then
+    });
+  } else {
+    //if not error then
 
     console.log(
       "DISPLAYING TOP ARTISTS FOR " +
-      artistData.topartists["@attr"].country.toUpperCase()
+        artistData.topartists["@attr"].country.toUpperCase()
     );
 
     /* Set the header above the artist chart display. */
     var countryName = artistData.topartists["@attr"].country;
-    countryName.charAt(0).toUpperCase();  // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
+    countryName.charAt(0).toUpperCase(); // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
     chartHeaderElement.text("Top Artists for " + countryName); // This is a jQuery Object, not a regular DOM element.
 
     var artistList = document.createElement("tbody");
@@ -110,14 +112,16 @@ function displayCountryTopTracks(trackData) {
 
   // catch error
   if (trackData.error) {
-    console.log("Meow")
+    console.log("Meow");
   } else {
-
-    console.log("DISPLAYING TOP TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase());
+    console.log(
+      "DISPLAYING TOP TRACKS FOR " +
+        trackData.tracks["@attr"].country.toUpperCase()
+    );
 
     /* Set the header above the track chart display. */
     var countryName = trackData.tracks["@attr"].country;
-    countryName.charAt(0).toUpperCase();  // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
+    countryName.charAt(0).toUpperCase(); // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
     chartHeaderElement.text("Top Tracks for " + countryName); // This is a jQuery Object, not a regular DOM element.
     console.log(chartHeaderElement);
 
@@ -128,7 +132,14 @@ function displayCountryTopTracks(trackData) {
     for (var i = 0; i < 10; i++) {
       var trackRow = document.createElement("tr");
 
-      trackRow.innerHTML = "<th>" + (i + 1) + " </th> <td> <p>  " + trackData.tracks.track[i].name + "-by " + trackData.tracks.track[i].artist.name + "</p> </td>"
+      trackRow.innerHTML =
+        "<th>" +
+        (i + 1) +
+        " </th> <td> <p>  " +
+        trackData.tracks.track[i].name +
+        "-by " +
+        trackData.tracks.track[i].artist.name +
+        "</p> </td>";
       // trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
       trackRow.setAttribute("data-track", "Top-" + i);
 
@@ -167,7 +178,7 @@ function displayGlobalTopArtists(artistData) {
   //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
   //     artist.appendChild(artistList);
   // }
-};
+}
 
 /*
  *  Displays the global top tracks when given the data from a JSON request.
@@ -234,19 +245,23 @@ function displayGlobalTopTracks(trackData) {
 /*
  *  Fetches the image URL of the image for the artist. Because it takes time to fetch the image for the artist, I need to pass on the image
  *  element as a parameter along with the artist name, so that I can set the source of the image as soon as I get it.
- * 
+ *
  *  This function uses the Bands In Town API:
  *  https://rest.bandsintown.com/artists/
- * 
+ *
  *  NOTE: We only need to use the Bands In Town API as the last.fm API does not include any images for the artist/track. All image links
  *  last.fm gives are just placeholder stars.
- * 
- *  INPUTS: 
+ *
+ *  INPUTS:
  *      artistName:     The name of the artist in the form of a string.
  *      imageElement:   The vanilla JS DOM Element of the image whose source we need to set.
  */
 function fetchArtistImageURL(artistName, imageElement) {
-  var url = "https://rest.bandsintown.com/artists/" + artistName + "?app_id=" + bandsInTownApiKey;
+  var url =
+    "https://rest.bandsintown.com/artists/" +
+    artistName +
+    "?app_id=" +
+    bandsInTownApiKey;
 
   fetch(url)
     .then(function (response) {
@@ -458,13 +473,43 @@ geojson.eachLayer(function (layer) {
       [layer.feature.properties.label_y, layer.feature.properties.label_x],
       4
     );
+
+    localStorage.setItem(layer.feature.properties.name, [
+      layer.feature.properties.label_y,
+      layer.feature.properties.label_x,
+    ]);
     countryName = layer.feature.properties.name_long;
     //name // iso_n3: 3 digit code // iso_a3: 3 character code//
     console.log(countryName); //sucessfully getting the country code
+    addingButtons();
     var trackData = fetchCountryTopTracks(countryName); //fetchingTop Tracks using country code
   });
   // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
   // console.log("test");
+});
+
+// to generate a button of previously clicked on countries
+function addingButtons() {
+  var searchHistory = document.getElementById("search-history");
+  var saveButton = document.createElement("button");
+  saveButton.innerText = countryName;
+  saveButton.setAttribute("id", countryName);
+  saveButton.classList.add("recall");
+  searchHistory.append(saveButton);
+}
+
+// created event listener for appended button to recall to countries coodinates
+$(function recallCountry() {
+  var searchHistory = document.getElementById("search-history");
+  $(searchHistory).on("click", ".recall", function () {
+    console.log(this.id);
+    countryName = this.id;
+    var previousCountry = localStorage.getItem(countryName);
+    var coordinates = previousCountry.split(",");
+    console.log(coordinates);
+    map.setView([coordinates[0], coordinates[1]], 4);
+    var trackData = fetchCountryTopTracks(countryName);
+  });
 });
 
 map.fitBounds(geojson.getBounds());
