@@ -15,12 +15,17 @@ const spotifyClientSecret = "c465fe59764440a79b727fd65af86bd9";
 /* This variable is needed if we click on a country and want to switch tabs. We need someplace to refer to the country that was selected. */
 var currentlySelectedCountry = "";
 
+/* Because we are going to paginate the data and only display a chunk of it at a time, we need to save it somewhere. */
+var trackData, artistData;
+
+var global = true;
+
 /*
  *  Displays the top artists for a particular country when given the data from a JSON request.
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
-function displayCountryTopArtists(artistData) {
+function displayCountryTopArtists() {
   var charts = document.getElementById("chart");
   var artist = document.getElementById("chart-table");
   var modal = document.getElementById("alert");
@@ -109,7 +114,7 @@ function displayCountryTopArtists(artistData) {
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
-function displayCountryTopTracks(trackData) {
+function displayCountryTopTracks() {
   var tracks = document.getElementById("chart-table");
   tracks.innerHTML = ""; //emptying no matter what
 
@@ -266,6 +271,25 @@ function fetchArtistImageURL(artistName, imageElement) {
     });
 }
 
+async function fetchCountryData(countryName) {
+    /* 
+     *  When a country is selected, we'll just get all the data at once, and then what is displayed just depends on the toggle and button that the user hits.
+     */
+    let first = fetchCountryTopTracks(countryName);
+    let second = fetchCountryTopArtists(countryName);
+
+    console.log("FETCHING COUNTRY DATA");
+
+    Promise.all([first, second]).then(function() {
+      console.log("DISPLAYING DATA");
+      if (topTracksButton.parent().is(".is-active")) {
+          displayCountryTopTracks();
+      } else {
+          displayCountryTopArtists();
+      }
+  });
+}
+
 /*
  *  Fetches the top artists by country name.
  *  Inputs:
@@ -280,6 +304,7 @@ function fetchCountryTopArtists(countryName) {
     lastFMApiKey +
     "&format=json";
 
+    var result =
   fetch(url)
     .then(function (response) {
       console.log("response", response);
@@ -289,8 +314,14 @@ function fetchCountryTopArtists(countryName) {
     .then(function (data) {
       console.log("data", data);
 
-      displayCountryTopArtists(data);
+      artistData = data;
+
+      console.log("TOP ARTISTS SUCCESSFULLY FETCHED");
+
+      return data;
     });
+
+    return result;
 }
 
 /*
@@ -307,6 +338,8 @@ function fetchCountryTopTracks(countryName) {
     lastFMApiKey +
     "&format=json";
 
+  var result =
+
   fetch(url)
     .then(function (response) {
       console.log("response", response);
@@ -316,8 +349,14 @@ function fetchCountryTopTracks(countryName) {
     .then(function (data) {
       console.log("data", data);
 
-      displayCountryTopTracks(data);
+      trackData = data;
+
+      console.log("TOP TRACKS SUCCESSFULLY FETCHED");
+
+      return data;
     });
+
+    return result;
 }
 
 /*
@@ -402,7 +441,7 @@ function fetchGlobalTopTracks() {
  *    1. If the top artists button isn't already active:
  *    2. Remove the active state from the top tracks button.
  *    3. Add the active state to the top artists button.
- *    4. Fetch and display the results for the top artists from the currently selected country.
+ *    4. Display the results for the top artists from the currently selected country.
  */
 function topArtistsOnClick(event) {
     /* The active state is actually held in the parent of the top artists button. */
@@ -416,11 +455,11 @@ function topArtistsOnClick(event) {
         /* 3. Add the active state to the top artists button. */
         liParent.addClass("is-active");
 
-        /* 4. Fetch and display the results for the top artists from the currently selected country, or the globe if no country is selected. */
+        /* 4. Display the results for the top artists from the currently selected country, or the globe if no country is selected. */
         if (!currentlySelectedCountry) {
-            fetchGlobalTopArtists();
+            displayGlobalTopArtists();
         } else {
-            fetchCountryTopArtists(currentlySelectedCountry);
+            displayCountryTopArtists(currentlySelectedCountry);
         }
     } else {
       //console.log("TOP ARTISTS BUTTON ALREADY ACTIVE");
@@ -448,10 +487,10 @@ function topTracksOnClick(event) {
         liParent.addClass("is-active");
 
         /* 4. Fetch and display the results for the top tracks from the currently selected country, or the globe if no country is selected. */
-        if (!currentlySelectedCountry) {
-            fetchGlobalTopTracks()
+        if (global) {
+            displayGlobalTopTracks();
         } else {
-            fetchCountryTopTracks(currentlySelectedCountry);
+            displayCountryTopTracks(currentlySelectedCountry);
         }
     }
 }
@@ -526,7 +565,10 @@ geojson.eachLayer(function (layer) {
     //name // iso_n3: 3 digit code // iso_a3: 3 character code//
     console.log(countryName); //sucessfully getting the country code
     currentlySelectedCountry = countryName; // We need to set this when a country is clicked in case we switch tabs.
-    var trackData = fetchCountryTopTracks(countryName); //fetchingTop Tracks using country code
+
+    fetchCountryData(countryName);
+
+    global = false;
   });
   // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
   // console.log("test");
