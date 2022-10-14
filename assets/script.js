@@ -458,7 +458,7 @@ geojson.eachLayer(function (layer) {
       [layer.feature.properties.label_y, layer.feature.properties.label_x],
       4
     );
-    countryName = layer.feature.properties.name;
+    countryName = layer.feature.properties.name_long;
     //name // iso_n3: 3 digit code // iso_a3: 3 character code//
     console.log(countryName); //sucessfully getting the country code
     var trackData = fetchCountryTopTracks(countryName); //fetchingTop Tracks using country code
