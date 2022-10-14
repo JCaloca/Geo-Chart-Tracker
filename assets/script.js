@@ -28,27 +28,41 @@ function displayCountryTopArtists(artistData) {
 
   /* Set the header above the artist chart display. */
   var countryName = artistData.topartists["@attr"].country;
-  countryName.charAt(0).toUpperCase();
-  artistChartHeaderElement.text("Top Artists for "+countryName);
+  countryName.charAt(0).toUpperCase();  // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
+  artistChartHeaderElement.text("Top Artists for "+countryName); // This is a jQuery Object, not a regular DOM element.
+
+  var artistList = document.createElement("tbody");
+  artist.appendChild(artistList);
 
   //artist.innerText = "Top 10 ARTISTS FOR " + artistData.topartists["@attr"].country.toUpperCase();
   for (var i = 0; i < 10; i++) {
-    var artistList = document.createElement("tbody");
+    var artistRow = document.createElement("tr");
+    
     // var thead = document.createElement("thead");
-    artistList.innerHTML =
-      "<tr><th>" +
+    artistRow.innerHTML =
+      "<th>" +
       (i + 1) +
       "</th> <td> <p>" +
       artistData.topartists.artist[i].name +
-      "</p> </td> </tr>";
+      "</p> </td>";
     // artistList.innerText = artistData.topartists.artist[i].name;
-    artistList.setAttribute("data-artist", "Top-" + (i + 1));
+    artistRow.setAttribute("data-artist", "Top-" + (i + 1));
+
+    var artistName = artistData.topartists.artist[i].name;
+    var dataCell = document.createElement("td");
+    artistRow.appendChild(dataCell);
+
+    var artistImage = document.createElement("img");
+    fetchArtistImageURL(artistName, artistImage);
+    $(artistImage).addClass("image is-24x24");
+    dataCell.appendChild(artistImage);
+
     // var artistPng = document.createElement("img")
     // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
     // artistList.appendChild(artistPng);
     // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
-    artist.appendChild(artistList);
+    artistList.appendChild(artistRow);
   }
 }
 
@@ -65,16 +79,30 @@ function displayCountryTopTracks(trackData) {
 
     /* Set the header above the track chart display. */
     var countryName = trackData.tracks["@attr"].country;
-    countryName.charAt(0).toUpperCase();
-    trackChartHeaderElement.text("Top Tracks for "+countryName);
+    countryName.charAt(0).toUpperCase();  // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
+    trackChartHeaderElement.text("Top Tracks for "+countryName); // This is a jQuery Object, not a regular DOM element.
+
+    var trackList = document.createElement("tbody");
+    tracks.appendChild(trackList);
 
     //tracks.innerText = "Top 10 TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase();
     for (var i = 0; i < 10; i++) {
-        var trackList = document.createElement("tbody");
-        trackList.innerHTML = "<tr> <th>" + (i + 1) + "</th> <td> <p>" + trackData.tracks.track[i].name + "-by "+ trackData.tracks.track[i].artist.name +"</p> </td> </tr>"
+        var trackRow = document.createElement("tr");
+
+        trackRow.innerHTML = "<th>" + (i + 1) + "</th> <td> <p>" + trackData.tracks.track[i].name + "-by "+ trackData.tracks.track[i].artist.name +"</p> </td>"
         // trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
-        trackList.setAttribute("data-track", "Top-" + i);
-        tracks.appendChild(trackList);
+        trackRow.setAttribute("data-track", "Top-" + i);
+
+        var artistName = trackData.tracks.track[i].artist.name;
+        var dataCell = document.createElement("td");
+        trackRow.appendChild(dataCell);
+
+        var artistImage = document.createElement("img");
+        fetchArtistImageURL(artistName, artistImage);
+        $(artistImage).addClass("image is-24x24");
+        dataCell.appendChild(artistImage);
+
+        trackList.appendChild(trackRow);
     }
 }
     
@@ -165,18 +193,20 @@ function displayGlobalTopTracks(trackData) {
 }
 
 /*
- *  Fetches the ID of the artist given the artistName, so that we can use that ID to get an image of the artist.
+ *  Fetches the image URL of the image for the artist. Because it takes time to fetch the image for the artist, I need to pass on the image
+ *  element as a parameter along with the artist name, so that I can set the source of the image as soon as I get it.
+ * 
  *  This function uses the Bands In Town API:
  *  https://rest.bandsintown.com/artists/
  * 
  *  NOTE: We only need to use the Bands In Town API as the last.fm API does not include any images for the artist/track. All image links
  *  last.fm gives are just placeholder stars.
  * 
- *  RETURNS: The url to the image of the artist.
- * 
- *  INPUTS: The name of the artist in the form of a string.
+ *  INPUTS: 
+ *      artistName:     The name of the artist in the form of a string.
+ *      imageElement:   The vanilla JS DOM Element of the image whose source we need to set.
  */
-function fetchArtistImageURL(artistName) {
+function fetchArtistImageURL(artistName, imageElement) {
     var url = "https://rest.bandsintown.com/artists/"+artistName+"?app_id="+bandsInTownApiKey;
 
     fetch(url)
@@ -189,9 +219,7 @@ function fetchArtistImageURL(artistName) {
         console.log("data", data);
 
         var imageURL = data.thumb_url;
-        //console.log(imageURL);
-
-        return imageURL;
+        imageElement.setAttribute("src", imageURL);
     });
 }
 
