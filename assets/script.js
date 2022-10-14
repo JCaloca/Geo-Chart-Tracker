@@ -1,7 +1,5 @@
-var artistChartHeaderElement = $("#artist-chart-header");
-var trackChartHeaderElement = $("#tracks-chart-header");
-var tracksTableHeaderElement = $("#tracks-table-header");
-var artistTableHeaderElement = $("#artist-table-header");
+var chartTableHeaderElement = $("#chart-table-header");
+var chartHeaderElement = $("#chart-header");
 
 const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
@@ -18,8 +16,8 @@ const spotifyClientSecret = "c465fe59764440a79b727fd65af86bd9";
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayCountryTopArtists(artistData) {
-  var charts = document.getElementById("charts");
-  var artist = document.getElementById("artistDisplay");
+  var charts = document.getElementById("chart");
+  var artist = document.getElementById("chart-table");
   var modal = document.getElementById("alert");
   artist.innerHTML = ""; //clearing the box ahead of time. 
   modal.innerHTML = "<button id='close' class='modal-close is-large' aria-label='close'></button>";//resetting modal box for next pop up with just the button
@@ -63,7 +61,7 @@ function displayCountryTopArtists(artistData) {
     /* Set the header above the artist chart display. */
     var countryName = artistData.topartists["@attr"].country;
     countryName.charAt(0).toUpperCase();  // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
-    artistChartHeaderElement.text("Top Artists for " + countryName); // This is a jQuery Object, not a regular DOM element.
+    chartHeaderElement.text("Top Artists for " + countryName); // This is a jQuery Object, not a regular DOM element.
 
     var artistList = document.createElement("tbody");
     artist.appendChild(artistList);
@@ -107,7 +105,7 @@ function displayCountryTopArtists(artistData) {
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayCountryTopTracks(trackData) {
-  var tracks = document.getElementById("tracksDisplay");
+  var tracks = document.getElementById("chart-table");
   tracks.innerHTML = ""; //emptying no matter what
 
   // catch error
@@ -120,7 +118,8 @@ function displayCountryTopTracks(trackData) {
     /* Set the header above the track chart display. */
     var countryName = trackData.tracks["@attr"].country;
     countryName.charAt(0).toUpperCase();  // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
-    trackChartHeaderElement.text("Top Tracks for " + countryName); // This is a jQuery Object, not a regular DOM element.
+    chartHeaderElement.text("Top Tracks for " + countryName); // This is a jQuery Object, not a regular DOM element.
+    console.log(chartHeaderElement);
 
     var trackList = document.createElement("tbody");
     tracks.appendChild(trackList);
@@ -463,7 +462,6 @@ geojson.eachLayer(function (layer) {
     //name // iso_n3: 3 digit code // iso_a3: 3 character code//
     console.log(countryName); //sucessfully getting the country code
     var trackData = fetchCountryTopTracks(countryName); //fetchingTop Tracks using country code
-    var artistData = fetchCountryTopArtists(countryName); //fetchingTop Artist using country code
   });
   // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
   // console.log("test");

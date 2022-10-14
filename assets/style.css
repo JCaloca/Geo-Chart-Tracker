@@ -17,9 +17,7 @@ main {
     position: relative;
 }
 
-#charts {
-    width: 60%;
-
+#chart {
     position: absolute;
 
     top: 0;
@@ -28,4 +26,16 @@ main {
     z-index: 651;
 
     transform: translate(-1em, 1em);
+}
+
+#toggle {
+    position: absolute;
+
+    top: -5%;
+    left: 15%;
+}
+
+/* We want the background of the tab that isn't selected to be solid, not transparent. */
+li:not(.is-active) {
+    background-color: white;
 }
