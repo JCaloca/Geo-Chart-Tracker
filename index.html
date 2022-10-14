@@ -23,30 +23,54 @@
 
   <!-- The map and charts are wrapped in main to be able to easily position the charts over the map -->
   <main>
-    <div id="map"></div>
-    <section id="charts" class="box columns">
-      <!-- I need both the header and the table wrapped in a div so they display in the same column -->
-      <section id="track-chart" class="column">
-        <h2 id="tracks-chart-header" class="is-size-3 has-text-weight-bold"></h2>
-        <table id="tracksDisplay">
-          <thead id="tracks-table-header">
-            <tr>
-              <th><abbr title="Position"></abbr></th>
-            </tr>
-          </thead>
-        </table>
-      </section>
-      <section id="artist-chart" class="column">
-        <h2 id="artist-chart-header" class="is-size-3 has-text-weight-bold"></h2>
-        <table id="artistDisplay">
-          <thead id="artist-table-header">
-            <tr>
-              <th><abbr title="Position"></abbr></th>
-            </tr>
-          </thead>
-        </table>
-      </section>
+    <section id="chart" class="box">
+      <div id="toggle" class="tabs is-toggle is-toggle-rounded">
+        <ul>
+          <li class="is-active">
+            <a>
+              <span class="icon is-small"><i class="fa-solid fa-record-vinyl" aria-hidden="true"></i></span>
+              <span>Top Tracks</span>
+            </a>
+          </li>
+          <li>
+            <a>
+              <span class="icon is-small"><i class="fa-solid fa-palette" aria-hidden="true"></i></span>
+              <span>Top Artists</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <h2 id="chart-header" class="is-size-3 has-text-weight-bold"></h2>
+      <table id="chart-table">
+        <thead id="chart-table-header">
+          <tr>
+            <th><abbr title="Position"></abbr></th>
+          </tr>
+        </thead>
+      </table>
+      <footer class="card-footer">
+        <nav class="pagination" role="navigation" aria-label="pagination">
+          <ul class="pagination-list">
+            <li>
+              <a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
+            </li>
+            <li>
+              <a class="pagination-link" aria-label="Page 2" aria-current="page">2</a>
+            </li>
+            <li>
+              <a class="pagination-link" aria-label="Page 3" aria-current="page">3</a>
+            </li>
+            <li>
+              <a class="pagination-link" aria-label="Page 4" aria-current="page">4</a>
+            </li>
+            <li>
+              <a class="pagination-link" aria-label="Page 5" aria-current="page">5</a>
+            </li>
+          </ul>
+        </nav>
+      </footer>
     </section>
+    <div id="map"></div>
     <div id="alert" class="modal">
       <!-- added hard coded bulma modal, default hidden -->
       <button class="modal-close is-large" aria-label="close"></button>
@@ -57,6 +81,8 @@
     integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
     integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+  <!-- FontAwesome icons for the tabs -->
+  <script src="https://kit.fontawesome.com/77e25a049f.js" crossorigin="anonymous"></script>
   <script type="text/javascript" src="./assets/countries.js"></script>
   <script src="./assets/script.js"></script>
 </body>
