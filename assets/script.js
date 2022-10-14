@@ -1,3 +1,8 @@
+var artistChartHeaderElement = $("#artist-chart-header");
+var trackChartHeaderElement = $("#tracks-chart-header");
+var tracksTableHeaderElement = $("#tracks-table-header");
+var artistTableHeaderElement = $("#artist-table-header");
+
 const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
 const lastFMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what this is, just keeping it here in case I need it later.
@@ -20,9 +25,13 @@ function displayCountryTopArtists(artistData) {
   var charts = document.getElementById("charts");
   var artist = document.getElementById("artistDisplay");
   artist.innerHTML = "";
-  artist.innerText =
-    "Top 10 ARTISTS FOR " +
-    artistData.topartists["@attr"].country.toUpperCase();
+
+  /* Set the header above the artist chart display. */
+  var countryName = artistData.topartists["@attr"].country;
+  countryName.charAt(0).toUpperCase();
+  artistChartHeaderElement.text("Top Artists for "+countryName);
+
+  //artist.innerText = "Top 10 ARTISTS FOR " + artistData.topartists["@attr"].country.toUpperCase();
   for (var i = 0; i < 10; i++) {
     var artistList = document.createElement("tbody");
     // var thead = document.createElement("thead");
@@ -53,7 +62,13 @@ function displayCountryTopTracks(trackData) {
     console.log("DISPLAYING TOP TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase());
     var tracks = document.getElementById("tracksDisplay");
     tracks.innerHTML = "";
-    tracks.innerText = "Top 10 TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase();
+
+    /* Set the header above the track chart display. */
+    var countryName = trackData.tracks["@attr"].country;
+    countryName.charAt(0).toUpperCase();
+    trackChartHeaderElement.text("Top Tracks for "+countryName);
+
+    //tracks.innerText = "Top 10 TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase();
     for (var i = 0; i < 10; i++) {
         var trackList = document.createElement("tbody");
         trackList.innerHTML = "<tr> <th>" + (i + 1) + "</th> <td> <p>" + trackData.tracks.track[i].name + "-by "+ trackData.tracks.track[i].artist.name +"</p> </td> </tr>"
@@ -61,15 +76,15 @@ function displayCountryTopTracks(trackData) {
         trackList.setAttribute("data-track", "Top-" + i);
         tracks.appendChild(trackList);
     }
-  }
-    /*
-     *  Displays the global top artists when given the data from a JSON request.
-     *  Inputs:
-     *      data:   A JSON object representing the data we get back from the last.fm API
-     */
-
-    function displayGlobalTopArtists(artistData) {
-        console.log("DISPLAYING TOP ARTISTS");
+}
+    
+/*
+ *  Displays the global top artists when given the data from a JSON request.
+ *  Inputs:
+ *      data:   A JSON object representing the data we get back from the last.fm API
+ */
+function displayGlobalTopArtists(artistData) {
+    console.log("DISPLAYING TOP ARTISTS");
         // var charts = document.getElementById("charts");
         // var artist = document.getElementById("artistDisplay");
         // artist.innerHTML = "";
@@ -85,16 +100,15 @@ function displayCountryTopTracks(trackData) {
         //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
         //     artist.appendChild(artistList);
         // }
-    };
+};
 
-    /*
-     *  Displays the global top tracks when given the data from a JSON request.
-     *  Inputs:
-     *      data:   A JSON object representing the data we get back from the last.fm API
-     */
-
-    function displayGlobalTopTracks(trackData) {
-        console.log("DISPLAYING TOP TRACKS");
+/*
+ *  Displays the global top tracks when given the data from a JSON request.
+ *  Inputs:
+ *      data:   A JSON object representing the data we get back from the last.fm API
+ */
+function displayGlobalTopTracks(trackData) {
+    console.log("DISPLAYING TOP TRACKS");
         // var tracks = document.getElementById("tracksDisplay");
         // tracks.innerHTML = "";
         // tracks.innerText = "Top 10 Hottest Tracks:";
@@ -105,15 +119,14 @@ function displayCountryTopTracks(trackData) {
         //     tracks.appendChild(trackList);
         // console.log(trackData.tracks.track[i].name);
         // console.log(trackData.tracks.track[i].artist.name);
-    }
+}
 
-  /*
-   *  Displays the global top artists when given the data from a JSON request.
-   *  Inputs:
-   *      data:   A JSON object representing the data we get back from the last.fm API
-   */
-
-  function displayGlobalTopArtists(artistData) {
+/*
+ *  Displays the global top artists when given the data from a JSON request.
+ *  Inputs:
+ *      data:   A JSON object representing the data we get back from the last.fm API
+ */
+function displayGlobalTopArtists(artistData) {
     console.log("DISPLAYING TOP ARTISTS");
     // var charts = document.getElementById("charts");
     // var artist = document.getElementById("artistDisplay");
@@ -130,15 +143,14 @@ function displayCountryTopTracks(trackData) {
     //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
     //     artist.appendChild(artistList);
     // }
-  }
+}
 
-  /*
-   *  Displays the global top tracks when given the data from a JSON request.
-   *  Inputs:
-   *      data:   A JSON object representing the data we get back from the last.fm API
-   */
-
-  function displayGlobalTopTracks(trackData) {
+/*
+ *  Displays the global top tracks when given the data from a JSON request.
+ *  Inputs:
+ *      data:   A JSON object representing the data we get back from the last.fm API
+ */
+function displayGlobalTopTracks(trackData) {
     console.log("DISPLAYING TOP TRACKS");
     // var tracks = document.getElementById("tracksDisplay");
     // tracks.innerHTML = "";
@@ -150,7 +162,7 @@ function displayCountryTopTracks(trackData) {
     //     tracks.appendChild(trackList);
     // console.log(trackData.tracks.track[i].name);
     // console.log(trackData.tracks.track[i].artist.name);
-  }
+}
 
 /*
  *  Fetches the ID of the artist given the artistName, so that we can use that ID to get an image of the artist.

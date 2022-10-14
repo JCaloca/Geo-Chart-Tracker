@@ -12,3 +12,20 @@ header {
 h1 {
     height: max-content;
 }
+
+main {
+    position: relative;
+}
+
+#charts {
+    width: 60%;
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+
+    z-index: 651;
+
+    transform: translate(-1em, 1em);
+}
