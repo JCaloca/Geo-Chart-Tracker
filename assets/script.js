@@ -18,51 +18,86 @@ const spotifyClientSecret = "c465fe59764440a79b727fd65af86bd9";
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayCountryTopArtists(artistData) {
-  console.log(
-    "DISPLAYING TOP ARTISTS FOR " +
-      artistData.topartists["@attr"].country.toUpperCase()
-  );
   var charts = document.getElementById("charts");
   var artist = document.getElementById("artistDisplay");
-  artist.innerHTML = "";
+  var modal = document.getElementById("alert");
+  artist.innerHTML = ""; //clearing the box ahead of time. 
+  modal.innerHTML = "<button id='close' class='modal-close is-large' aria-label='close'></button>";//resetting modal box for next pop up with just the button
+  // modal.style.zIndex = "650"; // our map ended up has to be set 649 to get this to layer on top
 
-  /* Set the header above the artist chart display. */
-  var countryName = artistData.topartists["@attr"].country;
-  countryName.charAt(0).toUpperCase();  // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
-  artistChartHeaderElement.text("Top Artists for "+countryName); // This is a jQuery Object, not a regular DOM element.
+  //if artistData is returning a error
+  if (artistData.error) { //not last.fm supported
+    var modalCont = document.createElement("div");
+    var modalBack = document.createElement("div");
+    var mapCont = document.getElementById("map");
+    mapCont.classList.add("is-invisible"); //hide map
+    charts.classList.add("is-invisible"); //get rid of charts durring pop up
+    modalCont.classList.add("modal-content"); // bulma modal content class
+    modalBack.classList.add("modal-background", "has-background-dark");
+    modalCont.innerHTML = "<p class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to this country's data. Feel free to click on another country! <p>";
+    modal.prepend(modalCont); // add it to our hard-coded html box, before the button on 25
+    modal.prepend(modalBack); // almost missed the background
+    modal.classList.add("is-active");
 
-  var artistList = document.createElement("tbody");
-  artist.appendChild(artistList);
+    //function to be execute when close btn is clicked.
+    //needed to delegate cuz generated btn
+    document.addEventListener('click', function (e) {
+      var modal = document.getElementById("alert");
+      var mapCont = document.getElementById("map");
+      if (e.target.id === "close") {
+        modal.classList.remove("is-active");
+        console.log("AlertClosed");
+        mapCont.classList.remove("is-invisible");
+        charts.classList.remove("is-invisible");
+      }
+    }
+    );
 
-  //artist.innerText = "Top 10 ARTISTS FOR " + artistData.topartists["@attr"].country.toUpperCase();
-  for (var i = 0; i < 10; i++) {
-    var artistRow = document.createElement("tr");
-    
-    // var thead = document.createElement("thead");
-    artistRow.innerHTML =
-      "<th>" +
-      (i + 1) +
-      "</th> <td> <p>" +
-      artistData.topartists.artist[i].name +
-      "</p> </td>";
-    // artistList.innerText = artistData.topartists.artist[i].name;
-    artistRow.setAttribute("data-artist", "Top-" + (i + 1));
+  } else { //if not error then
 
-    var artistName = artistData.topartists.artist[i].name;
-    var dataCell = document.createElement("td");
-    artistRow.appendChild(dataCell);
+    console.log(
+      "DISPLAYING TOP ARTISTS FOR " +
+      artistData.topartists["@attr"].country.toUpperCase()
+    );
 
-    var artistImage = document.createElement("img");
-    fetchArtistImageURL(artistName, artistImage);
-    $(artistImage).addClass("image is-24x24");
-    dataCell.appendChild(artistImage);
+    /* Set the header above the artist chart display. */
+    var countryName = artistData.topartists["@attr"].country;
+    countryName.charAt(0).toUpperCase();  // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
+    artistChartHeaderElement.text("Top Artists for " + countryName); // This is a jQuery Object, not a regular DOM element.
 
-    // var artistPng = document.createElement("img")
-    // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
-    // artistList.appendChild(artistPng);
-    // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
-    //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
-    artistList.appendChild(artistRow);
+    var artistList = document.createElement("tbody");
+    artist.appendChild(artistList);
+
+    //artist.innerText = "Top 10 ARTISTS FOR " + artistData.topartists["@attr"].country.toUpperCase();
+    for (var i = 0; i < 10; i++) {
+      var artistRow = document.createElement("tr");
+
+      // var thead = document.createElement("thead");
+      artistRow.innerHTML =
+        "<th>" +
+        (i + 1) +
+        "</th> <td> <p>" +
+        artistData.topartists.artist[i].name +
+        "</p> </td>";
+      // artistList.innerText = artistData.topartists.artist[i].name;
+      artistRow.setAttribute("data-artist", "Top-" + (i + 1));
+
+      var artistName = artistData.topartists.artist[i].name;
+      var dataCell = document.createElement("td");
+      artistRow.appendChild(dataCell);
+
+      var artistImage = document.createElement("img");
+      fetchArtistImageURL(artistName, artistImage);
+      $(artistImage).addClass("image is-24x24");
+      dataCell.appendChild(artistImage);
+
+      // var artistPng = document.createElement("img")
+      // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
+      // artistList.appendChild(artistPng);
+      // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
+      //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
+      artistList.appendChild(artistRow);
+    }
   }
 }
 
@@ -72,62 +107,67 @@ function displayCountryTopArtists(artistData) {
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayCountryTopTracks(trackData) {
+  var tracks = document.getElementById("tracksDisplay");
+  tracks.innerHTML = ""; //emptying no matter what
+
+  // catch error
+  if (trackData.error) {
+    console.log("Meow")
+  } else {
 
     console.log("DISPLAYING TOP TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase());
-    var tracks = document.getElementById("tracksDisplay");
-    tracks.innerHTML = "";
 
     /* Set the header above the track chart display. */
     var countryName = trackData.tracks["@attr"].country;
     countryName.charAt(0).toUpperCase();  // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
-    trackChartHeaderElement.text("Top Tracks for "+countryName); // This is a jQuery Object, not a regular DOM element.
+    trackChartHeaderElement.text("Top Tracks for " + countryName); // This is a jQuery Object, not a regular DOM element.
 
     var trackList = document.createElement("tbody");
     tracks.appendChild(trackList);
 
     //tracks.innerText = "Top 10 TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase();
     for (var i = 0; i < 10; i++) {
-        var trackRow = document.createElement("tr");
+      var trackRow = document.createElement("tr");
 
-        trackRow.innerHTML = "<th>" + (i + 1) + "</th> <td> <p>" + trackData.tracks.track[i].name + "-by "+ trackData.tracks.track[i].artist.name +"</p> </td>"
-        // trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
-        trackRow.setAttribute("data-track", "Top-" + i);
+      trackRow.innerHTML = "<th>" + (i + 1) + "</th> <td> <p>" + trackData.tracks.track[i].name + "-by " + trackData.tracks.track[i].artist.name + "</p> </td>"
+      // trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
+      trackRow.setAttribute("data-track", "Top-" + i);
 
-        var artistName = trackData.tracks.track[i].artist.name;
-        var dataCell = document.createElement("td");
-        trackRow.appendChild(dataCell);
+      var artistName = trackData.tracks.track[i].artist.name;
+      var dataCell = document.createElement("td");
+      trackRow.appendChild(dataCell);
 
-        var artistImage = document.createElement("img");
-        fetchArtistImageURL(artistName, artistImage);
-        $(artistImage).addClass("image is-24x24");
-        dataCell.appendChild(artistImage);
+      var artistImage = document.createElement("img");
+      fetchArtistImageURL(artistName, artistImage);
+      $(artistImage).addClass("image is-24x24");
+      dataCell.appendChild(artistImage);
 
-        trackList.appendChild(trackRow);
+      trackList.appendChild(trackRow);
     }
+  }
 }
-    
 /*
  *  Displays the global top artists when given the data from a JSON request.
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayGlobalTopArtists(artistData) {
-    console.log("DISPLAYING TOP ARTISTS");
-        // var charts = document.getElementById("charts");
-        // var artist = document.getElementById("artistDisplay");
-        // artist.innerHTML = "";
-        // artist.innerText = "Top 10 Hottest Artist:";
-        // for (var i = 0; i < 10; i++) {
-        //     var artistList = document.createElement("li");
-        //     artistList.innerText = artistData.topartists.artist[i].name
-        //     artistList.setAttribute("data-artist", "Top-" + (i + 1));
-        //     // var artistPng = document.createElement("img")
-        //     // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
-        //     // artistList.appendChild(artistPng);
-        //     // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
-        //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
-        //     artist.appendChild(artistList);
-        // }
+  console.log("DISPLAYING TOP ARTISTS");
+  // var charts = document.getElementById("charts");
+  // var artist = document.getElementById("artistDisplay");
+  // artist.innerHTML = "";
+  // artist.innerText = "Top 10 Hottest Artist:";
+  // for (var i = 0; i < 10; i++) {
+  //     var artistList = document.createElement("li");
+  //     artistList.innerText = artistData.topartists.artist[i].name
+  //     artistList.setAttribute("data-artist", "Top-" + (i + 1));
+  //     // var artistPng = document.createElement("img")
+  //     // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
+  //     // artistList.appendChild(artistPng);
+  //     // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
+  //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
+  //     artist.appendChild(artistList);
+  // }
 };
 
 /*
@@ -136,17 +176,17 @@ function displayGlobalTopArtists(artistData) {
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayGlobalTopTracks(trackData) {
-    console.log("DISPLAYING TOP TRACKS");
-        // var tracks = document.getElementById("tracksDisplay");
-        // tracks.innerHTML = "";
-        // tracks.innerText = "Top 10 Hottest Tracks:";
-        // for (var i = 0; i < 10; i++) {
-        //     var trackList = document.createElement("li");
-        //     trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
-        //     trackList.setAttribute("data-track", "Top-" + i);
-        //     tracks.appendChild(trackList);
-        // console.log(trackData.tracks.track[i].name);
-        // console.log(trackData.tracks.track[i].artist.name);
+  console.log("DISPLAYING TOP TRACKS");
+  // var tracks = document.getElementById("tracksDisplay");
+  // tracks.innerHTML = "";
+  // tracks.innerText = "Top 10 Hottest Tracks:";
+  // for (var i = 0; i < 10; i++) {
+  //     var trackList = document.createElement("li");
+  //     trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
+  //     trackList.setAttribute("data-track", "Top-" + i);
+  //     tracks.appendChild(trackList);
+  // console.log(trackData.tracks.track[i].name);
+  // console.log(trackData.tracks.track[i].artist.name);
 }
 
 /*
@@ -155,22 +195,22 @@ function displayGlobalTopTracks(trackData) {
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayGlobalTopArtists(artistData) {
-    console.log("DISPLAYING TOP ARTISTS");
-    // var charts = document.getElementById("charts");
-    // var artist = document.getElementById("artistDisplay");
-    // artist.innerHTML = "";
-    // artist.innerText = "Top 10 Hottest Artist:";
-    // for (var i = 0; i < 10; i++) {
-    //     var artistList = document.createElement("li");
-    //     artistList.innerText = artistData.topartists.artist[i].name
-    //     artistList.setAttribute("data-artist", "Top-" + (i + 1));
-    //     // var artistPng = document.createElement("img")
-    //     // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
-    //     // artistList.appendChild(artistPng);
-    //     // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
-    //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
-    //     artist.appendChild(artistList);
-    // }
+  console.log("DISPLAYING TOP ARTISTS");
+  // var charts = document.getElementById("charts");
+  // var artist = document.getElementById("artistDisplay");
+  // artist.innerHTML = "";
+  // artist.innerText = "Top 10 Hottest Artist:";
+  // for (var i = 0; i < 10; i++) {
+  //     var artistList = document.createElement("li");
+  //     artistList.innerText = artistData.topartists.artist[i].name
+  //     artistList.setAttribute("data-artist", "Top-" + (i + 1));
+  //     // var artistPng = document.createElement("img")
+  //     // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
+  //     // artistList.appendChild(artistPng);
+  //     // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
+  //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
+  //     artist.appendChild(artistList);
+  // }
 }
 
 /*
@@ -179,17 +219,17 @@ function displayGlobalTopArtists(artistData) {
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
 function displayGlobalTopTracks(trackData) {
-    console.log("DISPLAYING TOP TRACKS");
-    // var tracks = document.getElementById("tracksDisplay");
-    // tracks.innerHTML = "";
-    // tracks.innerText = "Top 10 Hottest Tracks:";
-    // for (var i = 0; i < 10; i++) {
-    //     var trackList = document.createElement("li");
-    //     trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
-    //     trackList.setAttribute("data-track", "Top-" + i);
-    //     tracks.appendChild(trackList);
-    // console.log(trackData.tracks.track[i].name);
-    // console.log(trackData.tracks.track[i].artist.name);
+  console.log("DISPLAYING TOP TRACKS");
+  // var tracks = document.getElementById("tracksDisplay");
+  // tracks.innerHTML = "";
+  // tracks.innerText = "Top 10 Hottest Tracks:";
+  // for (var i = 0; i < 10; i++) {
+  //     var trackList = document.createElement("li");
+  //     trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
+  //     trackList.setAttribute("data-track", "Top-" + i);
+  //     tracks.appendChild(trackList);
+  // console.log(trackData.tracks.track[i].name);
+  // console.log(trackData.tracks.track[i].artist.name);
 }
 
 /*
@@ -207,19 +247,19 @@ function displayGlobalTopTracks(trackData) {
  *      imageElement:   The vanilla JS DOM Element of the image whose source we need to set.
  */
 function fetchArtistImageURL(artistName, imageElement) {
-    var url = "https://rest.bandsintown.com/artists/"+artistName+"?app_id="+bandsInTownApiKey;
+  var url = "https://rest.bandsintown.com/artists/" + artistName + "?app_id=" + bandsInTownApiKey;
 
-    fetch(url)
+  fetch(url)
     .then(function (response) {
-        console.log("response", response);
+      console.log("response", response);
 
-        return response.json();
+      return response.json();
     })
     .then(function (data) {
-        console.log("data", data);
+      console.log("data", data);
 
-        var imageURL = data.thumb_url;
-        imageElement.setAttribute("src", imageURL);
+      var imageURL = data.thumb_url;
+      imageElement.setAttribute("src", imageURL);
     });
 }
 
