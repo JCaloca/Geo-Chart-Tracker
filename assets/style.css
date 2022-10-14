@@ -29,10 +29,7 @@ main {
 }
 
 #toggle {
-    position: absolute;
 
-    top: -5%;
-    left: 15%;
 }
 
 /* We want the background of the tab that isn't selected to be solid, not transparent. */

@@ -23,8 +23,8 @@
 
   <!-- The map and charts are wrapped in main to be able to easily position the charts over the map -->
   <main>
-    <section id="chart" class="box">
-      <div id="toggle" class="tabs is-toggle is-toggle-rounded">
+    <section id="chart" class="card">
+      <div id="toggle" class="tabs is-toggle is-fullwidth card-header mb-0">
         <ul>
           <li class="is-active">
             <a>
@@ -40,16 +40,17 @@
           </li>
         </ul>
       </div>
-      <h2 id="chart-header" class="is-size-3 has-text-weight-bold"></h2>
-      <table id="chart-table">
-        <thead id="chart-table-header">
-          <tr>
-            <th><abbr title="Position"></abbr></th>
-          </tr>
-        </thead>
-      </table>
-      <footer class="card-footer">
-        <nav class="pagination" role="navigation" aria-label="pagination">
+      <div class="card-content">
+        <h2 id="chart-header" class="is-size-3 has-text-weight-bold"></h2>
+        <table id="chart-table">
+          <thead id="chart-table-header">
+            <tr>
+              <th><abbr title="Position"></abbr></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <nav class="pagination is-centered" role="navigation" aria-label="pagination">
           <ul class="pagination-list">
             <li>
               <a class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
@@ -68,7 +69,6 @@
             </li>
           </ul>
         </nav>
-      </footer>
     </section>
     <div id="map"></div>
     <div id="alert" class="modal">
