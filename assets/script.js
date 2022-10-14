@@ -287,21 +287,21 @@ function fetchArtistImageURL(artistName, imageElement) {
 }
 
 async function fetchCountryData(countryName) {
-    /* 
-     *  When a country is selected, we'll just get all the data at once, and then what is displayed just depends on the toggle and button that the user hits.
-     */
-    let first = fetchCountryTopTracks(countryName);
-    let second = fetchCountryTopArtists(countryName);
+  /*
+   *  When a country is selected, we'll just get all the data at once, and then what is displayed just depends on the toggle and button that the user hits.
+   */
+  let first = fetchCountryTopTracks(countryName);
+  let second = fetchCountryTopArtists(countryName);
 
-    console.log("FETCHING COUNTRY DATA");
+  console.log("FETCHING COUNTRY DATA");
 
-    Promise.all([first, second]).then(function() {
-      console.log("DISPLAYING DATA");
-      if (topTracksButton.parent().is(".is-active")) {
-          displayCountryTopTracks();
-      } else {
-          displayCountryTopArtists();
-      }
+  Promise.all([first, second]).then(function () {
+    console.log("DISPLAYING DATA");
+    if (topTracksButton.parent().is(".is-active")) {
+      displayCountryTopTracks();
+    } else {
+      displayCountryTopArtists();
+    }
   });
 }
 
@@ -319,8 +319,7 @@ function fetchCountryTopArtists(countryName) {
     lastFMApiKey +
     "&format=json";
 
-    var result =
-  fetch(url)
+  var result = fetch(url)
     .then(function (response) {
       console.log("response", response);
 
@@ -336,7 +335,7 @@ function fetchCountryTopArtists(countryName) {
       return data;
     });
 
-    return result;
+  return result;
 }
 
 /*
@@ -353,9 +352,7 @@ function fetchCountryTopTracks(countryName) {
     lastFMApiKey +
     "&format=json";
 
-  var result =
-
-  fetch(url)
+  var result = fetch(url)
     .then(function (response) {
       console.log("response", response);
 
@@ -371,7 +368,7 @@ function fetchCountryTopTracks(countryName) {
       return data;
     });
 
-    return result;
+  return result;
 }
 
 /*
@@ -459,26 +456,26 @@ function fetchGlobalTopTracks() {
  *    4. Display the results for the top artists from the currently selected country.
  */
 function topArtistsOnClick(event) {
-    /* The active state is actually held in the parent of the top artists button. */
-    liParent = topArtistsButton.parent();
+  /* The active state is actually held in the parent of the top artists button. */
+  liParent = topArtistsButton.parent();
 
-    /* 1. If the top artists button isn't already active: */
-    if (!liParent.is(".is-active")) {
-        /* 2. Remove the active state from the top tracks button. */
-        topTracksButton.parent().removeClass("is-active");
+  /* 1. If the top artists button isn't already active: */
+  if (!liParent.is(".is-active")) {
+    /* 2. Remove the active state from the top tracks button. */
+    topTracksButton.parent().removeClass("is-active");
 
-        /* 3. Add the active state to the top artists button. */
-        liParent.addClass("is-active");
+    /* 3. Add the active state to the top artists button. */
+    liParent.addClass("is-active");
 
-        /* 4. Display the results for the top artists from the currently selected country, or the globe if no country is selected. */
-        if (!currentlySelectedCountry) {
-            displayGlobalTopArtists();
-        } else {
-            displayCountryTopArtists(currentlySelectedCountry);
-        }
+    /* 4. Display the results for the top artists from the currently selected country, or the globe if no country is selected. */
+    if (!currentlySelectedCountry) {
+      displayGlobalTopArtists();
     } else {
-      //console.log("TOP ARTISTS BUTTON ALREADY ACTIVE");
+      displayCountryTopArtists(currentlySelectedCountry);
     }
+  } else {
+    //console.log("TOP ARTISTS BUTTON ALREADY ACTIVE");
+  }
 }
 
 /*
@@ -490,24 +487,24 @@ function topArtistsOnClick(event) {
  *    4.  Fetch and display the results for the top tracks from the currently selected country.
  */
 function topTracksOnClick(event) {
-    /* The active state is actually held in the parent of the top artists button. */
-    liParent = topTracksButton.parent();
+  /* The active state is actually held in the parent of the top artists button. */
+  liParent = topTracksButton.parent();
 
-    /* 1.  If the top tracks button isn't already active: */
-    if (!liParent.is(".is-active")) {
-        /* 2.  Remove the active state from the top artists button. */
-        topArtistsButton.parent().removeClass("is-active");
+  /* 1.  If the top tracks button isn't already active: */
+  if (!liParent.is(".is-active")) {
+    /* 2.  Remove the active state from the top artists button. */
+    topArtistsButton.parent().removeClass("is-active");
 
-        /* 3.  Add the active state to the top tracks button. */
-        liParent.addClass("is-active");
+    /* 3.  Add the active state to the top tracks button. */
+    liParent.addClass("is-active");
 
-        /* 4. Fetch and display the results for the top tracks from the currently selected country, or the globe if no country is selected. */
-        if (global) {
-            displayGlobalTopTracks();
-        } else {
-            displayCountryTopTracks(currentlySelectedCountry);
-        }
+    /* 4. Fetch and display the results for the top tracks from the currently selected country, or the globe if no country is selected. */
+    if (global) {
+      displayGlobalTopTracks();
+    } else {
+      displayCountryTopTracks(currentlySelectedCountry);
     }
+  }
 }
 
 // var worldjsonPath = "./assets/custom.geo.json"
@@ -589,7 +586,6 @@ geojson.eachLayer(function (layer) {
     currentlySelectedCountry = countryName; // We need to set this when a country is clicked in case we switch tabs.
     fetchCountryData(countryName);
     global = false;
-
   });
   // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
   // console.log("test");
@@ -615,7 +611,7 @@ $(function recallCountry() {
     var coordinates = previousCountry.split(",");
     console.log(coordinates);
     map.setView([coordinates[0], coordinates[1]], 4);
-    var trackData = fetchCountryTopTracks(countryName);
+    var countryData = fetchCountryData(countryName);
   });
 });
 
