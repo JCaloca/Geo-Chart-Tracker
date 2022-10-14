@@ -128,7 +128,7 @@ function displayCountryTopTracks(trackData) {
     for (var i = 0; i < 10; i++) {
       var trackRow = document.createElement("tr");
 
-      trackRow.innerHTML = "<th>" + (i + 1) + "</th> <td> <p>" + trackData.tracks.track[i].name + "-by " + trackData.tracks.track[i].artist.name + "</p> </td>"
+      trackRow.innerHTML = "<th>" + (i + 1) + " </th> <td> <p>  " + trackData.tracks.track[i].name + "-by " + trackData.tracks.track[i].artist.name + "</p> </td>"
       // trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
       trackRow.setAttribute("data-track", "Top-" + i);
 
