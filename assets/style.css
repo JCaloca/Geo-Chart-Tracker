@@ -27,12 +27,3 @@ main {
 
     transform: translate(-1em, 1em);
 }
-
-#toggle {
-
-}
-
-/* We want the background of the tab that isn't selected to be solid, not transparent. */
-li:not(.is-active) {
-    background-color: white;
-}
