@@ -38,6 +38,23 @@ var regionText;
 var global;
 
 /* 
+ *  This function defines the default style of each polygon country on our map.
+ *
+ *  For reference to why the style is defined this way see:
+ *  https://leafletjs.com/reference.html#geojson-style
+ */
+function countryStyle(feature) {
+  return {
+    fillColor: "white",
+    weight: 2,
+    opacity: 1,
+    color: 'blue',
+    dashArray: '3',
+    fillOpacity: 0.7
+  };
+}
+
+/* 
  *  This is the only function that should be called upon to display chart results to the page. Because we have toggle and pagination lists,
  *  it's hard to keep track of what to display. The logic for what information is displayed given which toggles and pages are active goes here.
  * 
@@ -522,6 +539,37 @@ function generateTrackTablePage(pageIndex) {
 }
 
 /*
+ *  Defines the style of the country when the mouse hovers over it.
+ */
+function highlightCountry(e) {
+  console.log(e.target);
+  var layer = e.target;
+
+  layer.setStyle({
+    weight: 5,
+    fillColor: "666",
+    color: '#666',
+    dashArray: '',
+    fillOpacity: 0.7
+  });
+
+  if (!L.Browser.opera && !L.Browser.edge) {
+    layer.bringToFront();
+  }
+}
+
+/* 
+ *  This function defines the listeners that are attached to each country.
+ */
+function onEachCountry(feature, layer) {
+  layer.on({
+    mouseover: highlightCountry,
+    mouseout: resetHighlight,
+    click: setSelected
+  });
+}
+
+/*
  *  Logic for the pagination buttons on click.
  *
  *  When the pagination button is clicked we must:
@@ -549,6 +597,22 @@ function paginationButtonOnClick(event) {
 }
 
 /*
+ *  Defines the mouseout event on a country.
+ *  
+ *  On a mouseout event in a country, we must:
+ *    1. If the class is not selected:
+ *      a. Reset the style of the country.
+ */
+function resetHighlight(e) {
+  var layer = e.target;
+
+  if (layer.options.className === "selected") {
+
+  }
+  geojson.resetStyle(e.target);
+}
+
+/*
  *  This function just resets the currently selected pagination link to page 1.
  *
  *  In order to set the currently selected page to page 1 we must:
@@ -562,6 +626,17 @@ function resetPaginationLink() {
 
   /* 2. Add the is-current class to the first pagination link. */
   firstPaginationLinkElement.addClass("is-current");
+}
+
+/*
+ *  Sets the country as selected when the user clicks a country.
+ */
+function setSelected(e) {
+  var layer = e.target;
+
+  layer.setStyle({
+    className: "selected"
+  })
 }
 
 /*
@@ -670,7 +745,10 @@ var positronLabels = L.tileLayer(
   }
 ).addTo(map);
 
-var geojson = L.geoJson(countriesDATA).addTo(map); //loading the containers and adding it to our map
+var geojson = L.geoJson(countriesDATA, {
+  style: countryStyle,
+  onEachFeature: onEachCountry
+}).addTo(map); //loading the containers and adding it to our map
 geojson.eachLayer(function (layer) {
   layer.bindPopup(layer.feature.properties.name).on("click", function (e) {
     //adding leaflet event to zoom in at the countries
@@ -688,7 +766,6 @@ geojson.eachLayer(function (layer) {
     addingButtons();
     currentlySelectedCountry = countryName; // We need to set this when a country is clicked in case we switch tabs.
     fetchAndDisplayCountryData(countryName);
-    global = false;
   });
   // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
 });
