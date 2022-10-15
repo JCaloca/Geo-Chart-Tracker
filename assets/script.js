@@ -103,7 +103,7 @@ function displayChart() {
   if (topTracksButton.parent().is(".is-active")) {
     displayTopTracks(pageIndex);
   } else {
-  /* 3. b. If the artists button is toggled, we call displayTopArtists with the index of the page. */
+    /* 3. b. If the artists button is toggled, we call displayTopArtists with the index of the page. */
     displayTopArtists(pageIndex);
   }
 }
@@ -149,11 +149,16 @@ function displayTopArtists(pageIndex) {
     document.addEventListener("click", function (e) {
       var modal = document.getElementById("alert");
       var mapCont = document.getElementById("map");
+      var errorBtn = document.getElementById(countryName);
       if (e.target.id === "close") {
         modal.classList.remove("is-active");
         console.log("AlertClosed");
         mapCont.classList.remove("is-invisible");
         charts.classList.remove("is-invisible");
+        //chaning error city button to red
+        errorBtn.classList.remove("is-primary");
+        errorBtn.classList.remove("is-warning");
+        errorBtn.classList.add("is-danger");
       }
     });
   } else {
@@ -184,7 +189,7 @@ function displayTopTracks(pageIndex) {
     "<button id='close' class='modal-close is-large' aria-label='close'></button>";
   //resetting modal box for next pop up with just the button
 
-  //if artistData is returning a error
+  //if trackData is returning a error
   if (trackData.error) {
     //not last.fm supported
     var modalCont = document.createElement("div");
@@ -209,11 +214,15 @@ function displayTopTracks(pageIndex) {
     document.addEventListener("click", function (e) {
       var modal = document.getElementById("alert");
       var mapCont = document.getElementById("map");
+      var errorBtn = document.getElementById(countryName);
       if (e.target.id === "close") {
         modal.classList.remove("is-active");
         console.log("AlertClosed");
         mapCont.classList.remove("is-invisible");
         charts.classList.remove("is-invisible");
+        errorBtn.classList.remove("is-primary");
+        errorBtn.classList.remove("is-warning");
+        errorBtn.classList.add("is-danger");
       }
     });
   } else {
@@ -888,7 +897,8 @@ $(function recallCountry() {
      *  Here, we need to get the feature that we are zooming to and set its state to selected
      */
     setCountryAsSelectedAndStyle(countryName);
-
+    this.classList.remove("is-primary");
+    this.classList.add("is-warning");
     var previousCountry = localStorage.getItem(countryName);
     var coordinates = previousCountry.split(",");
     console.log(coordinates);
