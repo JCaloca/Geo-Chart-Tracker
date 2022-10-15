@@ -20,7 +20,7 @@ const MAX_RESULTS_PER_PAGE = 10;
 /* This variable is needed if we click on a country and want to switch tabs. We need someplace to refer to the country that was selected. */
 var currentlySelectedCountry = "";
 
-/* 
+/*
  *  I need to keep track of the currently selected feature on the map so I can remove the class selected when a new country is selected.
  *  This variable needs to be updated everytime a country is selected.
  */
@@ -29,19 +29,20 @@ var currentlySelectedFeature;
 /* Because we are going to paginate the data and only display a chunk of it at a time, we need to save it somewhere. */
 var trackData, artistData;
 
-/* 
+/*
  *  This is the text for the region we are searching top artists/tracks for. It's easiest just to set it when we fetch data for a certain
  *  region (either a country or the globe) rather than have a boolean representing whether we are searching the globe or not and
  *  having a massive if-else statement to navigate through that.
  */
 var regionText;
 
-/* 
- *  A boolean indicating we are doing a global search. This variable is used by the function generateArtistTablePage() as name of the list of 
+/*
+ *  A boolean indicating we are doing a global search. This variable is used by the function generateArtistTablePage() as name of the list of
  *  top artists globally is different than the name of the top artists returned in a country top artists fetch within the data object.
  *  this variable needs to be updated appropriately after every fetch call.
  */
 var global;
+
 
 /* I'll just set this up here so I can refer to it in a function. */
 var geojson, map;
@@ -59,7 +60,7 @@ var selectedStyle = {
   className: "selected"
 };
 
-/* 
+/*
  *  This function defines the default style of each polygon country on our map.
  *
  *  For reference to why the style is defined this way see:
@@ -70,17 +71,17 @@ function countryStyle(feature) {
     fillColor: "white",
     weight: 2,
     opacity: 1,
-    color: 'blue',
-    dashArray: '3',
+    color: "blue",
+    dashArray: "3",
     fillOpacity: 0.7,
-    className: "not-selected"
+    className: "not-selected",
   };
 }
 
-/* 
+/*
  *  This is the only function that should be called upon to display chart results to the page. Because we have toggle and pagination lists,
  *  it's hard to keep track of what to display. The logic for what information is displayed given which toggles and pages are active goes here.
- * 
+ *
  *  In order to display the chart, we have to:
  *    1. Empty out the chart display element.
  *    2. See what page we are looking at.
@@ -101,9 +102,8 @@ function displayChart() {
   /* 3. a. If the tracks button is toggled, we call displayTopTracks with the index of the page. */
   if (topTracksButton.parent().is(".is-active")) {
     displayTopTracks(pageIndex);
-  }
+  } else {
   /* 3. b. If the artists button is toggled, we call displayTopArtists with the index of the page. */
-  else {
     displayTopArtists(pageIndex);
   }
 }
@@ -141,7 +141,7 @@ function displayTopArtists(pageIndex) {
     modal.prepend(modalCont); // add it to our hard-coded html box, before the button on 25
     modal.prepend(modalBack); // almost missed the background
     modal.classList.add("is-active");
-    // additional feedback when country is not supported instead showing last searched  
+    // additional feedback when country is not supported instead showing last searched
     chartHeaderElement.text("No Trending Data Available");
 
     //function to be execute when close btn is clicked.
@@ -155,9 +155,8 @@ function displayTopArtists(pageIndex) {
         mapCont.classList.remove("is-invisible");
         charts.classList.remove("is-invisible");
       }
-    })
+    });
   } else {
-
     /* We need the if statement here if we want to have different text depending on whether you search globally or for a country. */
     if (global) {
       chartHeaderElement.text(regionText + " Artists:"); // This is a jQuery Object, not a regular DOM element.
@@ -202,7 +201,7 @@ function displayTopTracks(pageIndex) {
     modal.prepend(modalCont); // add it to our hard-coded html box, before the button on 25
     modal.prepend(modalBack); // almost missed the background
     modal.classList.add("is-active");
-    // additional feedback when country is not supported instead showing last searched  
+    // additional feedback when country is not supported instead showing last searched
     chartHeaderElement.text("No Trending Data Available");
 
     //function to be execute when close btn is clicked.
@@ -218,7 +217,6 @@ function displayTopTracks(pageIndex) {
       }
     });
   } else {
-
     /* We need the if statement here if we want to have different text depending on whether you search globally or for a country. */
     if (global) {
       chartHeaderElement.text(regionText + " Tracks:"); // This is a jQuery Object, not a regular DOM element.
@@ -228,7 +226,7 @@ function displayTopTracks(pageIndex) {
     var trackList = generateTrackTablePage(pageIndex);
     tracks.appendChild(trackList);
   }
-};
+}
 
 /*
  *  Fetches the image URL of the image for the artist. Because it takes time to fetch the image for the artist, I need to pass on the image
@@ -269,7 +267,7 @@ function fetchArtistImageURL(artistName, imageElement) {
  *  Fetches and displays the top chart data for a country with the given country name.
  *  The reason why I am fetching and displaying the data in the same function as opposed to separating that is that we need to wait for the
  *  data to be fetched first to display the data, so displaying the data is kind of dependant on the fetch functions.
- * 
+ *
  *  When we fetch and display country data we need to:
  *    1. Set the global variable to false so generateArtistTablePage() knows the correct name for the artist list in the data we get back.
  *    2. Set the region text to display as the header above the chart table.
@@ -290,7 +288,6 @@ function fetchAndDisplayCountryData(countryName) {
 
   /* 4. Then, once both fetches are complete: */
   Promise.all([first, second]).then(function () {
-
     /* 4. a. We display the chart. */
     displayChart();
   });
@@ -300,7 +297,7 @@ function fetchAndDisplayCountryData(countryName) {
  *  Fetches and displays the global chart data.
  *  The reason why I am fetching and displaying the data in the same function as opposed to separating that is that we need to wait for the
  *  data to be fetched first to display the data, so displaying the data is kind of dependant on the fetch functions.
- * 
+ *
  *  When we fetch and display global data we need to:
  *    1. Set the global variable to true so generateArtistTablePage() knows the correct name for the artist list in the data we get back.
  *    2. Set the region text to display as the header above the chart table.
@@ -321,7 +318,6 @@ function fetchAndDisplayGlobalData() {
 
   /* 4. Then, once both fetches are complete: */
   Promise.all([first, second]).then(function () {
-
     /* 4. a. We display the chart. */
     displayChart();
   });
@@ -332,7 +328,7 @@ function fetchAndDisplayGlobalData() {
  *
  *  Inputs:
  *      countryName: The name of the country we are fetching data for as a string.
- *  Returns: 
+ *  Returns:
  *    result:  A promise that we will use later to wait for the fetch response before displaying the data.
  */
 function fetchCountryTopArtists(countryName) {
@@ -364,7 +360,7 @@ function fetchCountryTopArtists(countryName) {
  *
  *  Inputs:
  *      countryName: The name of the country we are fetching data for as a string.
- *  Returns: 
+ *  Returns:
  *    result:  A promise that we will use later to wait for the fetch response before displaying the data.
  */
 function fetchCountryTopTracks(countryName) {
@@ -425,7 +421,7 @@ function fetchMetroTopTracks(countryName, metroName) {
 /*
  *  Fetches the global top artists.
  *
- *  Returns: 
+ *  Returns:
  *    result:  A promise that we will use later to wait for the fetch response before displaying the data.
  */
 function fetchGlobalTopArtists() {
@@ -435,26 +431,25 @@ function fetchGlobalTopArtists() {
     lastFMApiKey +
     "&format=json";
 
-  let result =
-    fetch(url)
-      .then(function (response) {
-        console.log("response", response);
+  let result = fetch(url)
+    .then(function (response) {
+      console.log("response", response);
 
-        return response.json();
-      })
-      .then(function (data) {
-        console.log("data", data);
+      return response.json();
+    })
+    .then(function (data) {
+      console.log("data", data);
 
-        artistData = data;
-      });
+      artistData = data;
+    });
 
   return result;
 }
 
 /*
  *  Fetches the global top tracks and sets it to trackData so that we can use it to display portions of the data received later.
- * 
- *  Returns: 
+ *
+ *  Returns:
  *    result:  A promise that we will use later to wait for the fetch response before displaying the data.
  */
 function fetchGlobalTopTracks() {
@@ -464,18 +459,17 @@ function fetchGlobalTopTracks() {
     lastFMApiKey +
     "&format=json";
 
-  let result =
-    fetch(url)
-      .then(function (response) {
-        console.log("response", response);
+  let result = fetch(url)
+    .then(function (response) {
+      console.log("response", response);
 
-        return response.json();
-      })
-      .then(function (data) {
-        console.log("data", data);
+      return response.json();
+    })
+    .then(function (data) {
+      console.log("data", data);
 
-        trackData = data;
-      });
+      trackData = data;
+    });
 
   return result;
 }
@@ -483,9 +477,9 @@ function fetchGlobalTopTracks() {
 /*
  *  Generates one page of top track results, equivalent to 10 results.
  *
- *  Inputs:   
+ *  Inputs:
  *    pageIndex:    The index of the page that we are creating. Page indexes start at 1 and end at five, so there is the valid inputs are 1, 2, 3, 4, or 5.
- *  Returns:  
+ *  Returns:
  *    artistList:   An HTML element representing a list of top artists that is ready to be inserted as the body of the table element.
  */
 function generateArtistTablePage(pageIndex) {
@@ -495,12 +489,12 @@ function generateArtistTablePage(pageIndex) {
   /* The index we are using is pageIndex-1 as the pages start at index 1, but the array of data that we get back starts at 0, so we have to adjust for that. */
   var index = pageIndex - 1;
 
-  /* 
+  /*
    *  If we are creating, say, page 1 of the results, we need to iterate from 0-10. For page 2, , we will need to iterate through indices 10-19, etc....
    *  So, we need to make a number that is equal to 10 * index, set i to that number, and then have the for loop iterate through the next 10 results.
    */
   var startIndex = index * MAX_RESULTS_PER_PAGE;
-  for (var i = startIndex; i < (startIndex + MAX_RESULTS_PER_PAGE); i++) {
+  for (var i = startIndex; i < startIndex + MAX_RESULTS_PER_PAGE; i++) {
     var artistRow = document.createElement("tr");
     var topArtistList;
 
@@ -539,7 +533,7 @@ function generateArtistTablePage(pageIndex) {
  *
  *  Inputs:   pageIndex:    The index of the page that we are creating. Page indexes start at 1 and end at five, so the valid inputs are 1, 2, 3, 4, or 5.
  *  Returns:  trackList:    An HTML element representing a list of top tracks that is ready to be inserted as the body of the table element.
- * 
+ *
  *  The html element returned is of the form:
  *  <tbody>
  *    <tr data-artist="Top-{artistListIndex+1}">
@@ -563,12 +557,12 @@ function generateTrackTablePage(pageIndex) {
   /* The index we are using is pageIndex-1 as the pages start at index 1, but the array of data that we get back starts at 0, so we have to adjust for that. */
   var index = pageIndex - 1;
 
-  /* 
+  /*
    *  If we are creating, say, page 1 of the results, we need to iterate from 0-10. For page 2, , we will need to iterate through indices 10-19, etc....
    *  So, we need to make a number that is equal to 10 * index, set i to that number, and then have the for loop iterate through the next 10 results.
    */
   var startIndex = index * MAX_RESULTS_PER_PAGE;
-  for (var i = startIndex; i < (MAX_RESULTS_PER_PAGE + startIndex); i++) {
+  for (var i = startIndex; i < MAX_RESULTS_PER_PAGE + startIndex; i++) {
     var trackRow = document.createElement("tr");
 
     trackRow.innerHTML =
@@ -607,9 +601,9 @@ function highlightCountry(e) {
   layer.setStyle({
     weight: 5,
     fillColor: "666",
-    color: '#666',
-    dashArray: '',
-    fillOpacity: 0.7
+    color: "#666",
+    dashArray: "",
+    fillOpacity: 0.7,
   });
 
   if (!L.Browser.opera && !L.Browser.edge) {
@@ -617,14 +611,14 @@ function highlightCountry(e) {
   }
 }
 
-/* 
+/*
  *  This function defines the listeners that are attached to each country.
  */
 function onEachCountry(feature, layer) {
   layer.on({
     mouseover: highlightCountry,
     mouseout: resetHighlight,
-    click: setSelected
+    click: setSelected,
   });
 }
 
@@ -657,7 +651,7 @@ function paginationButtonOnClick(event) {
 
 /*
  *  Defines the mouseout event on a country.
- *  
+ *
  *  On a mouseout event in a country, we must:
  *    1. If the class is not selected:
  *      a. Reset the style of the country.
@@ -720,6 +714,7 @@ function setSelected(e) {
 
   /* We need to set the class of the feature to selected so that on a mouse out event the style isn't reset. */
   layer.setStyle(selectedStyle)
+
 }
 
 /*
@@ -830,7 +825,7 @@ var positronLabels = L.tileLayer(
 
 geojson = L.geoJson(countriesDATA, {
   style: countryStyle,
-  onEachFeature: onEachCountry
+  onEachFeature: onEachCountry,
 }).addTo(map); //loading the containers and adding it to our map
 geojson.eachLayer(function (layer) {
   layer.bindPopup(layer.feature.properties.name).on("click", function (e) {
@@ -857,10 +852,29 @@ geojson.eachLayer(function (layer) {
 function addingButtons() {
   var searchHistory = document.getElementById("search-history");
   var saveButton = document.createElement("button");
-  saveButton.innerText = countryName;
-  saveButton.setAttribute("id", countryName);
-  saveButton.classList.add("recall");
-  searchHistory.append(saveButton);
+  var badge = document.createElement("span");
+
+  if (!document.getElementById(countryName)) {
+    saveButton.innerText = countryName;
+    saveButton.setAttribute("id", countryName);
+    saveButton.classList.add(
+      "recall",
+      "button",
+      "is-primary",
+      "is-rounded",
+      "is-medium",
+      "is-responsive",
+      "mt-3",
+      "mb-3",
+      "mx-1"
+    );
+    searchHistory.append(saveButton);
+  } else {
+    var existsButton = document.getElementById(countryName);
+    existsButton.classList.remove("is-primary");
+    existsButton.classList.add("is-warning");
+    console.log("test");
+  }
 }
 
 // created event listener for appended button to recall to countries coodinates
@@ -882,7 +896,6 @@ $(function recallCountry() {
     fetchAndDisplayCountryData(countryName);
   });
 });
-
 
 topTracksButton.on("click", topTracksOnClick);
 topArtistsButton.on("click", topArtistsOnClick);
