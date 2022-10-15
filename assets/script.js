@@ -20,6 +20,12 @@ const MAX_RESULTS_PER_PAGE = 10;
 /* This variable is needed if we click on a country and want to switch tabs. We need someplace to refer to the country that was selected. */
 var currentlySelectedCountry = "";
 
+/* 
+ *  I need to keep track of the currently selected feature on the map so I can remove the class selected when a new country is selected.
+ *  This variable needs to be updated everytime a country is selected.
+ */
+var currentlySelectedFeature;
+
 /* Because we are going to paginate the data and only display a chunk of it at a time, we need to save it somewhere. */
 var trackData, artistData;
 
@@ -36,6 +42,24 @@ var regionText;
  *  this variable needs to be updated appropriately after every fetch call.
  */
 var global;
+
+/* 
+ *  This function defines the default style of each polygon country on our map.
+ *
+ *  For reference to why the style is defined this way see:
+ *  https://leafletjs.com/reference.html#geojson-style
+ */
+function countryStyle(feature) {
+  return {
+    fillColor: "white",
+    weight: 2,
+    opacity: 1,
+    color: 'blue',
+    dashArray: '3',
+    fillOpacity: 0.7,
+    className: "not-selected"
+  };
+}
 
 /* 
  *  This is the only function that should be called upon to display chart results to the page. Because we have toggle and pagination lists,
@@ -558,6 +582,37 @@ function generateTrackTablePage(pageIndex) {
 }
 
 /*
+ *  Defines the style of the country when the mouse hovers over it.
+ */
+function highlightCountry(e) {
+  console.log(e.target);
+  var layer = e.target;
+
+  layer.setStyle({
+    weight: 5,
+    fillColor: "666",
+    color: '#666',
+    dashArray: '',
+    fillOpacity: 0.7
+  });
+
+  if (!L.Browser.opera && !L.Browser.edge) {
+    layer.bringToFront();
+  }
+}
+
+/* 
+ *  This function defines the listeners that are attached to each country.
+ */
+function onEachCountry(feature, layer) {
+  layer.on({
+    mouseover: highlightCountry,
+    mouseout: resetHighlight,
+    click: setSelected
+  });
+}
+
+/*
  *  Logic for the pagination buttons on click.
  *
  *  When the pagination button is clicked we must:
@@ -585,6 +640,21 @@ function paginationButtonOnClick(event) {
 }
 
 /*
+ *  Defines the mouseout event on a country.
+ *  
+ *  On a mouseout event in a country, we must:
+ *    1. If the class is not selected:
+ *      a. Reset the style of the country.
+ */
+function resetHighlight(e) {
+  var layer = e.target;
+
+  if (layer.options.className != "selected") {
+    geojson.resetStyle(layer);
+  }
+}
+
+/*
  *  This function just resets the currently selected pagination link to page 1.
  *
  *  In order to set the currently selected page to page 1 we must:
@@ -598,6 +668,27 @@ function resetPaginationLink() {
 
   /* 2. Add the is-current class to the first pagination link. */
   firstPaginationLinkElement.addClass("is-current");
+}
+
+/*
+ *  Sets the country as selected when the user clicks a country.
+ */
+function setSelected(e) {
+  var layer = e.target;
+
+  /* If there is a country that is currently selected. */
+  if (currentlySelectedFeature) {
+    /* We need to change the class to not-selected, and reset the style of the country. */
+    currentlySelectedFeature.setStyle({ className: "selected" });
+    geojson.resetStyle(currentlySelectedFeature);
+  }
+
+  currentlySelectedFeature = layer;
+
+  /* We need to set the class of the feature to selected so that on a mouse out event the style isn't reset. */
+  layer.setStyle({
+    className: "selected"
+  })
 }
 
 /*
@@ -706,7 +797,10 @@ var positronLabels = L.tileLayer(
   }
 ).addTo(map);
 
-var geojson = L.geoJson(countriesDATA).addTo(map); //loading the containers and adding it to our map
+var geojson = L.geoJson(countriesDATA, {
+  style: countryStyle,
+  onEachFeature: onEachCountry
+}).addTo(map); //loading the containers and adding it to our map
 geojson.eachLayer(function (layer) {
   layer.bindPopup(layer.feature.properties.name).on("click", function (e) {
     //adding leaflet event to zoom in at the countries
@@ -724,7 +818,6 @@ geojson.eachLayer(function (layer) {
     addingButtons();
     currentlySelectedCountry = countryName; // We need to set this when a country is clicked in case we switch tabs.
     fetchAndDisplayCountryData(countryName);
-    global = false;
   });
   // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
 });
