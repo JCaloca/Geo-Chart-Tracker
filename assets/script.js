@@ -20,6 +20,12 @@ const MAX_RESULTS_PER_PAGE = 10;
 /* This variable is needed if we click on a country and want to switch tabs. We need someplace to refer to the country that was selected. */
 var currentlySelectedCountry = "";
 
+/* 
+ *  I need to keep track of the currently selected feature on the map so I can remove the class selected when a new country is selected.
+ *  This variable needs to be updated everytime a country is selected.
+ */
+var currentlySelectedFeature;
+
 /* Because we are going to paginate the data and only display a chunk of it at a time, we need to save it somewhere. */
 var trackData, artistData;
 
@@ -50,7 +56,8 @@ function countryStyle(feature) {
     opacity: 1,
     color: 'blue',
     dashArray: '3',
-    fillOpacity: 0.7
+    fillOpacity: 0.7,
+    className: "not-selected"
   };
 }
 
@@ -642,10 +649,9 @@ function paginationButtonOnClick(event) {
 function resetHighlight(e) {
   var layer = e.target;
 
-  if (layer.options.className === "selected") {
-
+  if (layer.options.className != "selected") {
+    geojson.resetStyle(layer);
   }
-  geojson.resetStyle(e.target);
 }
 
 /*
@@ -670,6 +676,16 @@ function resetPaginationLink() {
 function setSelected(e) {
   var layer = e.target;
 
+  /* If there is a country that is currently selected. */
+  if (currentlySelectedFeature) {
+    /* We need to change the class to not-selected, and reset the style of the country. */
+    currentlySelectedFeature.setStyle({ className: "selected" });
+    geojson.resetStyle(currentlySelectedFeature);
+  }
+
+  currentlySelectedFeature = layer;
+
+  /* We need to set the class of the feature to selected so that on a mouse out event the style isn't reset. */
   layer.setStyle({
     className: "selected"
   })
