@@ -43,6 +43,22 @@ var regionText;
  */
 var global;
 
+/* I'll just set this up here so I can refer to it in a function. */
+var geojson, map;
+
+/* 
+ *  Defines the style of the country on select. I'm defining it here as multiple functions use this style, so I only have to modify it here if
+ *  I want to change it.
+ */
+var selectedStyle = {
+  weight: 5,
+  fillColor: "666",
+  color: '#666',
+  dashArray: '',
+  fillOpacity: 0.7,
+  className: "selected"
+};
+
 /* 
  *  This function defines the default style of each polygon country on our map.
  *
@@ -585,7 +601,7 @@ function generateTrackTablePage(pageIndex) {
  *  Defines the style of the country when the mouse hovers over it.
  */
 function highlightCountry(e) {
-  console.log(e.target);
+  //console.log(e.target);
   var layer = e.target;
 
   layer.setStyle({
@@ -670,6 +686,24 @@ function resetPaginationLink() {
   firstPaginationLinkElement.addClass("is-current");
 }
 
+/* 
+ *  Iterates through all of the features on the map and sets the feature as selected when layer.feature.properties.name_long matches 
+ *  the input string countryName.
+ */
+function setCountryAsSelectedAndStyle(countryName) {
+  geojson.eachLayer(function (layer) {
+    if (layer.feature.properties.name_long === countryName) {
+      /*
+       *  Now that we have the match, we need to set the style to the selected style, reset the style and state of the currently selected country,
+       *  and set the currentlySelectedFeature to this feature.
+       */
+      geojson.resetStyle(currentlySelectedFeature);
+      layer.setStyle(selectedStyle);
+      currentlySelectedFeature = layer;
+    }
+  });
+}
+
 /*
  *  Sets the country as selected when the user clicks a country.
  */
@@ -679,16 +713,13 @@ function setSelected(e) {
   /* If there is a country that is currently selected. */
   if (currentlySelectedFeature) {
     /* We need to change the class to not-selected, and reset the style of the country. */
-    currentlySelectedFeature.setStyle({ className: "selected" });
     geojson.resetStyle(currentlySelectedFeature);
   }
 
   currentlySelectedFeature = layer;
 
   /* We need to set the class of the feature to selected so that on a mouse out event the style isn't reset. */
-  layer.setStyle({
-    className: "selected"
-  })
+  layer.setStyle(selectedStyle)
 }
 
 /*
@@ -751,7 +782,7 @@ function topTracksOnClick(event) {
   }
 }
 
-var map = L.map("map", {
+map = L.map("map", {
   center: [0, 0],
   maxZoom: 4,
 });
@@ -797,7 +828,7 @@ var positronLabels = L.tileLayer(
   }
 ).addTo(map);
 
-var geojson = L.geoJson(countriesDATA, {
+geojson = L.geoJson(countriesDATA, {
   style: countryStyle,
   onEachFeature: onEachCountry
 }).addTo(map); //loading the containers and adding it to our map
@@ -838,6 +869,12 @@ $(function recallCountry() {
   $(searchHistory).on("click", ".recall", function () {
     console.log(this.id);
     countryName = this.id;
+
+    /* 
+     *  Here, we need to get the feature that we are zooming to and set its state to selected
+     */
+    setCountryAsSelectedAndStyle(countryName);
+
     var previousCountry = localStorage.getItem(countryName);
     var coordinates = previousCountry.split(",");
     console.log(coordinates);
