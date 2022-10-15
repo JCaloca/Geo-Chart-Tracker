@@ -1,6 +1,6 @@
 # Global Top Chart
 
-<https://jcaloca.github.io/Global-Track-Chart>
+<https://jcaloca.github.io/Global-Top-Chart>
 
 ------------------------------------------------------
 
@@ -16,13 +16,13 @@
 
 ## Desktop demo:           
 
-![Work Day Scheduler Desktop Demo](./assets/images/global-track-chart--desktop-demo.gif)
+![Work Day Scheduler Desktop Demo](./assets/images/global-Top-chart--desktop-demo.gif)
 
 ------------------------------------------------------
 
 ## Mobile demo:                    
 
-![Work Day Scheduler Mobile Demo](./assets/images/global-track-chart-mobile-demo.gif)
+![Work Day Scheduler Mobile Demo](./assets/images/global-Top-chart-mobile-demo.gif)
 
 ------------------------------------------------------
 
@@ -37,16 +37,16 @@ As soon as you navigate to the application, the global top artists are displayed
 
 ## Usage
 
-Navigate to: <https://jcaloca.github.io/Global-Track-Chart>
+Navigate to: <https://jcaloca.github.io/Global-Top-Chart>
 
 
 ## Technologies Used
 
-- [last.fm API]()
+- [BandsInTown API](https://rest.bandsintown.com/artists/)
+- [last.fm API](https://www.last.fm/api)
 - [LeafletJS](https://leafletjs.com/)
 - [Bulma CSS](https://bulma.io/)
 - [jQuery](https://jquery.com/)
-- [Bootstrap](https://getbootstrap.com/)
 - [JavaScript](https://www.javascript.com/)
 - CSS
 - HTML
