@@ -95,10 +95,14 @@ function displayTopArtists(pageIndex) {
     modalCont.classList.add("modal-content"); // bulma modal content class
     modalBack.classList.add("modal-background", "has-background-dark");
     modalCont.innerHTML =
-      "<p class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to this country's data. Feel free to click on another country! <p>";
+      "<p class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to " +
+      countryName +
+      "'s trending data. Feel free to click on another country! <p>";
     modal.prepend(modalCont); // add it to our hard-coded html box, before the button on 25
     modal.prepend(modalBack); // almost missed the background
     modal.classList.add("is-active");
+    // additional feedback when country is not supported instead showing last searched  
+    chartHeaderElement.text("No Trending Data Available");
 
     //function to be execute when close btn is clicked.
     //needed to delegate cuz generated btn
@@ -111,9 +115,8 @@ function displayTopArtists(pageIndex) {
         mapCont.classList.remove("is-invisible");
         charts.classList.remove("is-invisible");
       }
-    });
+    })
   } else {
-    //if not error then
 
     /* We need the if statement here if we want to have different text depending on whether you search globally or for a country. */
     if (global) {
@@ -135,12 +138,45 @@ function displayTopArtists(pageIndex) {
  *      pageIndex:  The index of the page we want to display (either 1, 2, 3, 4, or 5)
  */
 function displayTopTracks(pageIndex) {
+  var charts = document.getElementById("chart");
   var tracks = document.getElementById("chart-table");
-  //tracks.innerHTML = ""; //emptying no matter what
+  var modal = document.getElementById("alert");
+  modal.innerHTML =
+    "<button id='close' class='modal-close is-large' aria-label='close'></button>";
+  //resetting modal box for next pop up with just the button
 
-  // catch error
+  //if artistData is returning a error
   if (trackData.error) {
-    console.log("Meow");
+    //not last.fm supported
+    var modalCont = document.createElement("div");
+    var modalBack = document.createElement("div");
+    var mapCont = document.getElementById("map");
+    mapCont.classList.add("is-invisible"); //hide map
+    charts.classList.add("is-invisible"); //get rid of charts durring pop up
+    modalCont.classList.add("modal-content"); // bulma modal content class
+    modalBack.classList.add("modal-background", "has-background-dark");
+    modalCont.innerHTML =
+      "<p class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to " +
+      countryName +
+      "'s trending data. Feel free to click on another country! <p>";
+    modal.prepend(modalCont); // add it to our hard-coded html box, before the button on 25
+    modal.prepend(modalBack); // almost missed the background
+    modal.classList.add("is-active");
+    // additional feedback when country is not supported instead showing last searched  
+    chartHeaderElement.text("No Trending Data Available");
+
+    //function to be execute when close btn is clicked.
+    //needed to delegate cuz generated btn
+    document.addEventListener("click", function (e) {
+      var modal = document.getElementById("alert");
+      var mapCont = document.getElementById("map");
+      if (e.target.id === "close") {
+        modal.classList.remove("is-active");
+        console.log("AlertClosed");
+        mapCont.classList.remove("is-invisible");
+        charts.classList.remove("is-invisible");
+      }
+    });
   } else {
 
     /* We need the if statement here if we want to have different text depending on whether you search globally or for a country. */
@@ -152,7 +188,7 @@ function displayTopTracks(pageIndex) {
     var trackList = generateTrackTablePage(pageIndex);
     tracks.appendChild(trackList);
   }
-}
+};
 
 /*
  *  Fetches the image URL of the image for the artist. Because it takes time to fetch the image for the artist, I need to pass on the image
@@ -652,7 +688,7 @@ var positron = L.tileLayer(
   {
     attribution: "©OpenStreetMap, ©CartoDB",
     continuousWorld: false,
-    // noWrap: true,
+    // noWrap: true, would stop tiling but throws error when panning
     // Bounds: [[-85.0511, -180], [85.0511, 180]],
     // maxZoom: 4
   }
@@ -717,7 +753,6 @@ $(function recallCountry() {
   });
 });
 
-map.fitBounds(geojson.getBounds());
 
 topTracksButton.on("click", topTracksOnClick);
 topArtistsButton.on("click", topArtistsOnClick);
