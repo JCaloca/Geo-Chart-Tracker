@@ -23,18 +23,30 @@ var currentlySelectedCountry = "";
 /* Because we are going to paginate the data and only display a chunk of it at a time, we need to save it somewhere. */
 var trackData, artistData;
 
-var global = true;
+/* 
+ *  This is the text for the region we are searching top artists/tracks for. It's easiest just to set it when we fetch data for a certain
+ *  region (either a country or the globe) rather than have a boolean representing whether we are searching the globe or not and
+ *  having a massive if-else statement to navigate through that.
+ */
+var regionText;
+
+/* 
+ *  A boolean indicating we are doing a global search. This variable is used by the function generateArtistTablePage() as name of the list of 
+ *  top artists globally is different than the name of the top artists returned in a country top artists fetch within the data object.
+ *  this variable needs to be updated appropriately after every fetch call.
+ */
+var global;
 
 /* 
  *  This is the only function that should be called upon to display chart results to the page. Because we have toggle and pagination lists,
  *  it's hard to keep track of what to display. The logic for what information is displayed given which toggles and pages are active goes here.
  * 
- *  In order to display the track, we have to:
+ *  In order to display the chart, we have to:
  *    1. Empty out the chart display element.
  *    2. See what page we are looking at.
  *    3. See what button is toggled.
- *      a. If the tracks button is toggled, we call displayCountryTopTracks with the index of the page - 1.
- *      b. If the artists button is toggled, we call isplayCountryTopArtists with the index of the page - 1.
+ *      a. If the tracks button is toggled, we call displayTopTracks with the index of the page.
+ *      b. If the artists button is toggled, we call displayTopArtists with the index of the page.
  */
 function displayChart() {
   /* 1. Empty out the chart display element. */
@@ -46,18 +58,24 @@ function displayChart() {
   pageIndex = parseInt(activePaginationElement.text());
 
   /* 3. See what button is toggled. */
-  /* a. If the tracks button is toggled, we call displayCountryTopTracks with the index of the page - 1. */
+  /* 3. a. If the tracks button is toggled, we call displayTopTracks with the index of the page. */
   if (topTracksButton.parent().is(".is-active")) {
-    displayCountryTopTracks(pageIndex);
-  } else {
-    displayCountryTopArtists(pageIndex);
+    displayTopTracks(pageIndex);
+  }
+  /* 3. b. If the artists button is toggled, we call displayTopArtists with the index of the page. */
+  else {
+    displayTopArtists(pageIndex);
   }
 }
 
 /*
- *  Displays the top artists for a particular country.
+ *  Displays the top artists when given the page we are on.
+ *  This function uses the variable artistData to display the tracks, so that variable MUST be set by fetching the data beforehand.
+ *
+ *  Inputs:
+ *      pageIndex:  The index of the page we are (either 1, 2, 3, 4, or 5)
  */
-function displayCountryTopArtists(pageIndex) {
+function displayTopArtists(pageIndex) {
   var charts = document.getElementById("chart");
   var artist = document.getElementById("chart-table");
   var modal = document.getElementById("alert");
@@ -97,48 +115,26 @@ function displayCountryTopArtists(pageIndex) {
   } else {
     //if not error then
 
-    /* Set the header above the artist chart display. */
-    var countryName = artistData.topartists["@attr"].country;
-    countryName.charAt(0).toUpperCase(); // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
-    chartHeaderElement.text("Top Artists for " + countryName); // This is a jQuery Object, not a regular DOM element.
+    /* We need the if statement here if we want to have different text depending on whether you search globally or for a country. */
+    if (global) {
+      chartHeaderElement.text(regionText + " Artists:"); // This is a jQuery Object, not a regular DOM element.
+    } else {
+      chartHeaderElement.text("Top Artists " + regionText);
+    }
 
-    //var artistList = document.createElement("tbody");
     var artistList = generateArtistTablePage(pageIndex);
     artist.appendChild(artistList);
-
-    /*
-    for (var i = 0; i < 10; i++) {
-      var artistRow = document.createElement("tr");
-
-      artistRow.innerHTML =
-        "<th>" +
-        (i + 1) +
-        "</th> <td> <p>" +
-        artistData.topartists.artist[i].name +
-        "</p> </td>";
-      artistRow.setAttribute("data-artist", "Top-" + (i + 1));
-
-      var artistName = artistData.topartists.artist[i].name;
-      var dataCell = document.createElement("td");
-      artistRow.appendChild(dataCell);
-
-      var artistImage = document.createElement("img");
-      fetchArtistImageURL(artistName, artistImage);
-      $(artistImage).addClass("image is-24x24");
-      dataCell.appendChild(artistImage);
-
-      artistList.appendChild(artistRow);
-    }
-    */
   }
 }
 
 /*
- *  Displays the top tracks for a particular country when given the data from a JSON request.
+ *  Displays the top tracks when given the page we are on.
+ *  This function uses the variable trackData to display the tracks, so that variable MUST be set by fetching the data beforehand.
+ *
  *  Inputs:
- *      data:   A JSON object representing the data we get back from the last.fm API
+ *      pageIndex:  The index of the page we want to display (either 1, 2, 3, 4, or 5)
  */
-function displayCountryTopTracks(arrayIndex) {
+function displayTopTracks(pageIndex) {
   var tracks = document.getElementById("chart-table");
   //tracks.innerHTML = ""; //emptying no matter what
 
@@ -147,127 +143,15 @@ function displayCountryTopTracks(arrayIndex) {
     console.log("Meow");
   } else {
 
-    /* Set the header above the track chart display. */
-    var countryName = trackData.tracks["@attr"].country;
-    countryName.charAt(0).toUpperCase(); // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
-    chartHeaderElement.text("Top Tracks for " + countryName); // This is a jQuery Object, not a regular DOM element.
-
-    // var trackList = document.createElement("tbody");
-    var trackList = generateTrackTablePage(arrayIndex);
-    tracks.appendChild(trackList);
-
-    /*
-    for (var i = 0; i < 10; i++) {
-      var trackRow = document.createElement("tr");
-
-      trackRow.innerHTML =
-        "<th>" +
-        (i + 1) +
-        " </th> <td> <p>  " +
-        trackData.tracks.track[i].name +
-        "-by " +
-        trackData.tracks.track[i].artist.name +
-        "</p> </td>";
-      trackRow.setAttribute("data-track", "Top-" + i);
-
-      var artistName = trackData.tracks.track[i].artist.name;
-      var dataCell = document.createElement("td");
-      trackRow.appendChild(dataCell);
-
-      var artistImage = document.createElement("img");
-      fetchArtistImageURL(artistName, artistImage);
-      $(artistImage).addClass("image is-24x24");
-      dataCell.appendChild(artistImage);
-
-      trackList.appendChild(trackRow);
+    /* We need the if statement here if we want to have different text depending on whether you search globally or for a country. */
+    if (global) {
+      chartHeaderElement.text(regionText + " Tracks:"); // This is a jQuery Object, not a regular DOM element.
+    } else {
+      chartHeaderElement.text("Top Tracks " + regionText);
     }
-    */
+    var trackList = generateTrackTablePage(pageIndex);
+    tracks.appendChild(trackList);
   }
-}
-/*
- *  Displays the global top artists when given the data from a JSON request.
- *  Inputs:
- *      data:   A JSON object representing the data we get back from the last.fm API
- */
-function displayGlobalTopArtists(artistData) {
-  console.log("DISPLAYING TOP ARTISTS");
-  // var charts = document.getElementById("charts");
-  // var artist = document.getElementById("artistDisplay");
-  // artist.innerHTML = "";
-  // artist.innerText = "Top 10 Hottest Artist:";
-  // for (var i = 0; i < 10; i++) {
-  //     var artistList = document.createElement("li");
-  //     artistList.innerText = artistData.topartists.artist[i].name
-  //     artistList.setAttribute("data-artist", "Top-" + (i + 1));
-  //     // var artistPng = document.createElement("img")
-  //     // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
-  //     // artistList.appendChild(artistPng);
-  //     // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
-  //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
-  //     artist.appendChild(artistList);
-  // }
-}
-
-/*
- *  Displays the global top tracks when given the data from a JSON request.
- *  Inputs:
- *      data:   A JSON object representing the data we get back from the last.fm API
- */
-function displayGlobalTopTracks(trackData) {
-  console.log("DISPLAYING TOP TRACKS");
-  // var tracks = document.getElementById("tracksDisplay");
-  // tracks.innerHTML = "";
-  // tracks.innerText = "Top 10 Hottest Tracks:";
-  // for (var i = 0; i < 10; i++) {
-  //     var trackList = document.createElement("li");
-  //     trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
-  //     trackList.setAttribute("data-track", "Top-" + i);
-  //     tracks.appendChild(trackList);
-  // console.log(trackData.tracks.track[i].name);
-  // console.log(trackData.tracks.track[i].artist.name);
-}
-
-/*
- *  Displays the global top artists when given the data from a JSON request.
- *  Inputs:
- *      data:   A JSON object representing the data we get back from the last.fm API
- */
-function displayGlobalTopArtists(artistData) {
-  console.log("DISPLAYING TOP ARTISTS");
-  // var charts = document.getElementById("charts");
-  // var artist = document.getElementById("artistDisplay");
-  // artist.innerHTML = "";
-  // artist.innerText = "Top 10 Hottest Artist:";
-  // for (var i = 0; i < 10; i++) {
-  //     var artistList = document.createElement("li");
-  //     artistList.innerText = artistData.topartists.artist[i].name
-  //     artistList.setAttribute("data-artist", "Top-" + (i + 1));
-  //     // var artistPng = document.createElement("img")
-  //     // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
-  //     // artistList.appendChild(artistPng);
-  //     // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
-  //     //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
-  //     artist.appendChild(artistList);
-  // }
-}
-
-/*
- *  Displays the global top tracks when given the data from a JSON request.
- *  Inputs:
- *      data:   A JSON object representing the data we get back from the last.fm API
- */
-function displayGlobalTopTracks(trackData) {
-  console.log("DISPLAYING TOP TRACKS");
-  // var tracks = document.getElementById("tracksDisplay");
-  // tracks.innerHTML = "";
-  // tracks.innerText = "Top 10 Hottest Tracks:";
-  // for (var i = 0; i < 10; i++) {
-  //     var trackList = document.createElement("li");
-  //     trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
-  //     trackList.setAttribute("data-track", "Top-" + i);
-  //     tracks.appendChild(trackList);
-  // console.log(trackData.tracks.track[i].name);
-  // console.log(trackData.tracks.track[i].artist.name);
 }
 
 /*
@@ -309,23 +193,71 @@ function fetchArtistImageURL(artistName, imageElement) {
  *  Fetches and displays the top chart data for a country with the given country name.
  *  The reason why I am fetching and displaying the data in the same function as opposed to separating that is that we need to wait for the
  *  data to be fetched first to display the data, so displaying the data is kind of dependant on the fetch functions.
+ * 
+ *  When we fetch and display country data we need to:
+ *    1. Set the global variable to false so generateArtistTablePage() knows the correct name for the artist list in the data we get back.
+ *    2. Set the region text to display as the header above the chart table.
+ *    3. We'll fetch both the top track and top artist data.
+ *    4. Then, once both fetches are complete:
+ *      a. We display the chart.
  */
 function fetchAndDisplayCountryData(countryName) {
-  /*
-   *  When a country is selected, we'll just get all the data at once, and then what is displayed just depends on the toggle and button that the user hits.
-   */
+  /* 1. Set the global variable to false so generateArtistTablePage() knows the correct name for the artist list in the data we get back. */
+  global = false;
+
+  /* 2. Set the region text to display as the header above the chart table. */
+  regionText = "for " + countryName;
+
+  /* 3. We'll fetch both the top track and top artist data. */
   let first = fetchCountryTopTracks(countryName);
   let second = fetchCountryTopArtists(countryName);
 
+  /* 4. Then, once both fetches are complete: */
   Promise.all([first, second]).then(function () {
+
+    /* 4. a. We display the chart. */
+    displayChart();
+  });
+}
+
+/*
+ *  Fetches and displays the global chart data.
+ *  The reason why I am fetching and displaying the data in the same function as opposed to separating that is that we need to wait for the
+ *  data to be fetched first to display the data, so displaying the data is kind of dependant on the fetch functions.
+ * 
+ *  When we fetch and display global data we need to:
+ *    1. Set the global variable to true so generateArtistTablePage() knows the correct name for the artist list in the data we get back.
+ *    2. Set the region text to display as the header above the chart table.
+ *    3. We'll fetch both the top track and top artist data.
+ *    4. Then, once both fetches are complete:
+ *      a. We display the chart.
+ */
+function fetchAndDisplayGlobalData() {
+  /* 1. Set the global variable to true so generateArtistTablePage() knows the correct name for the artist list in the data we get back. */
+  global = true;
+
+  /* 2. Set the region text to display as the header above the chart table. */
+  regionText = "Global Top";
+
+  /* 3. We'll fetch both the top track and top artist data. */
+  let first = fetchGlobalTopTracks();
+  let second = fetchGlobalTopArtists();
+
+  /* 4. Then, once both fetches are complete: */
+  Promise.all([first, second]).then(function () {
+
+    /* 4. a. We display the chart. */
     displayChart();
   });
 }
 
 /*
  *  Fetches the top artists by country name.
+ *
  *  Inputs:
  *      countryName: The name of the country we are fetching data for as a string.
+ *  Returns: 
+ *    result:  A promise that we will use later to wait for the fetch response before displaying the data.
  */
 function fetchCountryTopArtists(countryName) {
   var url =
@@ -353,8 +285,11 @@ function fetchCountryTopArtists(countryName) {
 
 /*
  *  Fetches the top tracks by country name.
+ *
  *  Inputs:
  *      countryName: The name of the country we are fetching data for as a string.
+ *  Returns: 
+ *    result:  A promise that we will use later to wait for the fetch response before displaying the data.
  */
 function fetchCountryTopTracks(countryName) {
   var url =
@@ -382,6 +317,7 @@ function fetchCountryTopTracks(countryName) {
 
 /*
  *  Fetches the top tracks by country and city name.
+ *
  *  Inputs:
  *      countryName:    The name of the country we are fetching data for as a string.
  *      metroName:      The name of the city we are fetching data for as a string.
@@ -412,6 +348,9 @@ function fetchMetroTopTracks(countryName, metroName) {
 
 /*
  *  Fetches the global top artists.
+ *
+ *  Returns: 
+ *    result:  A promise that we will use later to wait for the fetch response before displaying the data.
  */
 function fetchGlobalTopArtists() {
   var url =
@@ -420,21 +359,27 @@ function fetchGlobalTopArtists() {
     lastFMApiKey +
     "&format=json";
 
-  fetch(url)
-    .then(function (response) {
-      console.log("response", response);
+  let result =
+    fetch(url)
+      .then(function (response) {
+        console.log("response", response);
 
-      return response.json();
-    })
-    .then(function (data) {
-      console.log("data", data);
+        return response.json();
+      })
+      .then(function (data) {
+        console.log("data", data);
 
-      displayGlobalTopArtists(data);
-    });
+        artistData = data;
+      });
+
+  return result;
 }
 
 /*
- *  Fetches the global top tracks.
+ *  Fetches the global top tracks and sets it to trackData so that we can use it to display portions of the data received later.
+ * 
+ *  Returns: 
+ *    result:  A promise that we will use later to wait for the fetch response before displaying the data.
  */
 function fetchGlobalTopTracks() {
   var url =
@@ -443,27 +388,32 @@ function fetchGlobalTopTracks() {
     lastFMApiKey +
     "&format=json";
 
-  fetch(url)
-    .then(function (response) {
-      console.log("response", response);
+  let result =
+    fetch(url)
+      .then(function (response) {
+        console.log("response", response);
 
-      return response.json();
-    })
-    .then(function (data) {
-      console.log("data", data);
+        return response.json();
+      })
+      .then(function (data) {
+        console.log("data", data);
 
-      displayGlobalTopTracks(data);
-    });
+        trackData = data;
+      });
+
+  return result;
 }
 
 /*
  *  Generates one page of top track results, equivalent to 10 results.
  *
- *  Inputs:   pageIndex:    The index of the page that we are creating. Page indexes start at 1 and end at five, so there is
- *                          the valid inputs are 1, 2, 3, 4, or 5.
- *  Returns:  artistList:   An HTML element representing a list of top artists that is ready to be inserted as the body of the table element.
+ *  Inputs:   
+ *    pageIndex:    The index of the page that we are creating. Page indexes start at 1 and end at five, so there is the valid inputs are 1, 2, 3, 4, or 5.
+ *  Returns:  
+ *    artistList:   An HTML element representing a list of top artists that is ready to be inserted as the body of the table element.
  */
 function generateArtistTablePage(pageIndex) {
+  console.log(artistData);
   var artistList = document.createElement("tbody");
 
   /* The index we are using is pageIndex-1 as the pages start at index 1, but the array of data that we get back starts at 0, so we have to adjust for that. */
@@ -476,16 +426,24 @@ function generateArtistTablePage(pageIndex) {
   var startIndex = index * MAX_RESULTS_PER_PAGE;
   for (var i = startIndex; i < (startIndex + MAX_RESULTS_PER_PAGE); i++) {
     var artistRow = document.createElement("tr");
+    var topArtistList;
+
+    /* I need to add this if statement here as the list of top artists globally is called "artists" while the list of top artists for a country is called "topartists" */
+    if (global) {
+      topArtistList = artistData.artists;
+    } else {
+      topArtistList = artistData.topartists;
+    }
 
     artistRow.innerHTML =
       "<th>" +
       (i + 1) +
       "</th> <td> <p>" +
-      artistData.topartists.artist[i].name +
+      topArtistList.artist[i].name +
       "</p> </td>";
     artistRow.setAttribute("data-artist", "Top-" + (i + 1));
 
-    var artistName = artistData.topartists.artist[i].name;
+    var artistName = topArtistList.artist[i].name;
     var dataCell = document.createElement("td");
     artistRow.appendChild(dataCell);
 
@@ -503,11 +461,27 @@ function generateArtistTablePage(pageIndex) {
 /*
  *  Generates one page of top track results, equivalent to 10 results.
  *
- *  Inputs:   pageIndex:    The index of the page that we are creating. Page indexes start at 1 and end at five, so there is
- *                          the valid inputs are 1, 2, 3, 4, or 5.
+ *  Inputs:   pageIndex:    The index of the page that we are creating. Page indexes start at 1 and end at five, so the valid inputs are 1, 2, 3, 4, or 5.
  *  Returns:  trackList:    An HTML element representing a list of top tracks that is ready to be inserted as the body of the table element.
+ * 
+ *  The html element returned is of the form:
+ *  <tbody>
+ *    <tr data-artist="Top-{artistListIndex+1}">
+ *      <th>{artistListIndex+1}</th>
+ *      <td><p>{artistName}</p></td>
+ *      <td><img class="image is-24x24" src="{image path}"><td>
+ *    </tr>
+ *    <tr data-artist="Top-{artistListIndex+1}">
+ *      <th>{artistListIndex+1}</th>
+ *      <td><p>{artistName}</p></td>
+ *      <td><img class="image is-24x24" src="{image path}"><td>
+ *    </tr>
+ *    ...
+ *  </tbody>
+ *  (Note that {variableName} means we pull that variable name from the data that we get and it will be different for every chunk of data we get)
  */
 function generateTrackTablePage(pageIndex) {
+  console.log(trackData);
   var trackList = document.createElement("tbody");
 
   /* The index we are using is pageIndex-1 as the pages start at index 1, but the array of data that we get back starts at 0, so we have to adjust for that. */
@@ -549,6 +523,7 @@ function generateTrackTablePage(pageIndex) {
 
 /*
  *  Logic for the pagination buttons on click.
+ *
  *  When the pagination button is clicked we must:
  *    1. If the clicked element is not already active:
  *      a. Remove the active state from the active paginated element.
@@ -575,6 +550,7 @@ function paginationButtonOnClick(event) {
 
 /*
  *  This function just resets the currently selected pagination link to page 1.
+ *
  *  In order to set the currently selected page to page 1 we must:
  *    1. Remove the is-current class from the currently selected pagination link.
  *    2. Add the is-current class to the first pagination link.
@@ -590,6 +566,7 @@ function resetPaginationLink() {
 
 /*
  *  This function contains the logic for when the top artists button is clicked.
+ *
  *  When the top artists button is clicked:
  *    1. If the top artists button isn't already active:
  *    2. Remove the active state from the top tracks button.
@@ -619,6 +596,7 @@ function topArtistsOnClick(event) {
 
 /*
  *  This function contains the logic for when the top tracks button is clicked.
+ *
  *  When the top tracks button is clicked:
  *    1.  If the top tracks button isn't already active:
  *    2.  Remove the active state from the top artists button.
@@ -744,3 +722,5 @@ map.fitBounds(geojson.getBounds());
 topTracksButton.on("click", topTracksOnClick);
 topArtistsButton.on("click", topArtistsOnClick);
 $(".pagination-link").on("click", paginationButtonOnClick);
+
+fetchAndDisplayGlobalData();
