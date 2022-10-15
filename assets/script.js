@@ -2,6 +2,7 @@ var chartTableHeaderElement = $("#chart-table-header");
 var chartHeaderElement = $("#chart-header");
 var topTracksButton = $("#top-tracks-button");
 var topArtistsButton = $("#top-artists-button");
+var firstPaginationLinkElement = $("#first-pagination-link");
 
 const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
@@ -12,6 +13,10 @@ const bandsInTownApiKey = "codingbootcamp";
 const spotifyClientID = "27b52f6caffb4a35a8a4d0e4b70d0750";
 const spotifyClientSecret = "c465fe59764440a79b727fd65af86bd9";
 
+/* The maximum amount of pages we will display */
+const MAX_PAGES = 5;
+const MAX_RESULTS_PER_PAGE = 10;
+
 /* This variable is needed if we click on a country and want to switch tabs. We need someplace to refer to the country that was selected. */
 var currentlySelectedCountry = "";
 
@@ -20,16 +25,43 @@ var trackData, artistData;
 
 var global = true;
 
-/*
- *  Displays the top artists for a particular country when given the data from a JSON request.
- *  Inputs:
- *      data:   A JSON object representing the data we get back from the last.fm API
+/* 
+ *  This is the only function that should be called upon to display chart results to the page. Because we have toggle and pagination lists,
+ *  it's hard to keep track of what to display. The logic for what information is displayed given which toggles and pages are active goes here.
+ * 
+ *  In order to display the track, we have to:
+ *    1. Empty out the chart display element.
+ *    2. See what page we are looking at.
+ *    3. See what button is toggled.
+ *      a. If the tracks button is toggled, we call displayCountryTopTracks with the index of the page - 1.
+ *      b. If the artists button is toggled, we call isplayCountryTopArtists with the index of the page - 1.
  */
-function displayCountryTopArtists() {
+function displayChart() {
+  /* 1. Empty out the chart display element. */
+  var chartTableElement = document.getElementById("chart-table");
+  chartTableElement.innerHTML = "";
+
+  /* 2. See what page we are looking at. */
+  var activePaginationElement = $(".is-current");
+  pageIndex = parseInt(activePaginationElement.text());
+
+  /* 3. See what button is toggled. */
+  /* a. If the tracks button is toggled, we call displayCountryTopTracks with the index of the page - 1. */
+  if (topTracksButton.parent().is(".is-active")) {
+    displayCountryTopTracks(pageIndex);
+  } else {
+    displayCountryTopArtists(pageIndex);
+  }
+}
+
+/*
+ *  Displays the top artists for a particular country.
+ */
+function displayCountryTopArtists(pageIndex) {
   var charts = document.getElementById("chart");
   var artist = document.getElementById("chart-table");
   var modal = document.getElementById("alert");
-  artist.innerHTML = ""; //clearing the box ahead of time.
+  //artist.innerHTML = ""; //clearing the box ahead of time.
   modal.innerHTML =
     "<button id='close' class='modal-close is-large' aria-label='close'></button>"; //resetting modal box for next pop up with just the button
   // modal.style.zIndex = "650"; // our map ended up has to be set 649 to get this to layer on top
@@ -65,31 +97,25 @@ function displayCountryTopArtists() {
   } else {
     //if not error then
 
-    console.log(
-      "DISPLAYING TOP ARTISTS FOR " +
-        artistData.topartists["@attr"].country.toUpperCase()
-    );
-
     /* Set the header above the artist chart display. */
     var countryName = artistData.topartists["@attr"].country;
     countryName.charAt(0).toUpperCase(); // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
     chartHeaderElement.text("Top Artists for " + countryName); // This is a jQuery Object, not a regular DOM element.
 
-    var artistList = document.createElement("tbody");
+    //var artistList = document.createElement("tbody");
+    var artistList = generateArtistTablePage(pageIndex);
     artist.appendChild(artistList);
 
-    //artist.innerText = "Top 10 ARTISTS FOR " + artistData.topartists["@attr"].country.toUpperCase();
+    /*
     for (var i = 0; i < 10; i++) {
       var artistRow = document.createElement("tr");
 
-      // var thead = document.createElement("thead");
       artistRow.innerHTML =
         "<th>" +
         (i + 1) +
         "</th> <td> <p>" +
         artistData.topartists.artist[i].name +
         "</p> </td>";
-      // artistList.innerText = artistData.topartists.artist[i].name;
       artistRow.setAttribute("data-artist", "Top-" + (i + 1));
 
       var artistName = artistData.topartists.artist[i].name;
@@ -101,13 +127,9 @@ function displayCountryTopArtists() {
       $(artistImage).addClass("image is-24x24");
       dataCell.appendChild(artistImage);
 
-      // var artistPng = document.createElement("img")
-      // artistPng.setAttribute("src", artistData.artists.artist[i].image[0].***#***text)
-      // artistList.appendChild(artistPng);
-      // ^^ Wasn't able to get the artist images, apparently due to API update? The Jason response had a "#" before the key to call the URL
-      //if we want, we can use another API like musicbrainz or spotify to pull the artist ID and get the pic. maybe future planned features
       artistList.appendChild(artistRow);
     }
+    */
   }
 }
 
@@ -116,28 +138,25 @@ function displayCountryTopArtists() {
  *  Inputs:
  *      data:   A JSON object representing the data we get back from the last.fm API
  */
-function displayCountryTopTracks() {
+function displayCountryTopTracks(arrayIndex) {
   var tracks = document.getElementById("chart-table");
-  tracks.innerHTML = ""; //emptying no matter what
+  //tracks.innerHTML = ""; //emptying no matter what
 
   // catch error
   if (trackData.error) {
     console.log("Meow");
   } else {
-    console.log(
-      "DISPLAYING TOP TRACKS FOR " +
-        trackData.tracks["@attr"].country.toUpperCase()
-    );
 
     /* Set the header above the track chart display. */
     var countryName = trackData.tracks["@attr"].country;
     countryName.charAt(0).toUpperCase(); // we want the first letter in the country name to be capitalized (Brazil instead of brazil).
     chartHeaderElement.text("Top Tracks for " + countryName); // This is a jQuery Object, not a regular DOM element.
 
-    var trackList = document.createElement("tbody");
+    // var trackList = document.createElement("tbody");
+    var trackList = generateTrackTablePage(arrayIndex);
     tracks.appendChild(trackList);
 
-    //tracks.innerText = "Top 10 TRACKS FOR " + trackData.tracks["@attr"].country.toUpperCase();
+    /*
     for (var i = 0; i < 10; i++) {
       var trackRow = document.createElement("tr");
 
@@ -149,7 +168,6 @@ function displayCountryTopTracks() {
         "-by " +
         trackData.tracks.track[i].artist.name +
         "</p> </td>";
-      // trackList.innerText = trackData.tracks.track[i].name + " By: " + trackData.tracks.track[i].artist.name
       trackRow.setAttribute("data-track", "Top-" + i);
 
       var artistName = trackData.tracks.track[i].artist.name;
@@ -163,6 +181,7 @@ function displayCountryTopTracks() {
 
       trackList.appendChild(trackRow);
     }
+    */
   }
 }
 /*
@@ -286,22 +305,20 @@ function fetchArtistImageURL(artistName, imageElement) {
     });
 }
 
-async function fetchCountryData(countryName) {
+/*
+ *  Fetches and displays the top chart data for a country with the given country name.
+ *  The reason why I am fetching and displaying the data in the same function as opposed to separating that is that we need to wait for the
+ *  data to be fetched first to display the data, so displaying the data is kind of dependant on the fetch functions.
+ */
+function fetchAndDisplayCountryData(countryName) {
   /*
    *  When a country is selected, we'll just get all the data at once, and then what is displayed just depends on the toggle and button that the user hits.
    */
   let first = fetchCountryTopTracks(countryName);
   let second = fetchCountryTopArtists(countryName);
 
-  console.log("FETCHING COUNTRY DATA");
-
   Promise.all([first, second]).then(function () {
-    console.log("DISPLAYING DATA");
-    if (topTracksButton.parent().is(".is-active")) {
-      displayCountryTopTracks();
-    } else {
-      displayCountryTopArtists();
-    }
+    displayChart();
   });
 }
 
@@ -321,18 +338,14 @@ function fetchCountryTopArtists(countryName) {
 
   var result = fetch(url)
     .then(function (response) {
-      console.log("response", response);
+      //console.log("response", response);
 
       return response.json();
     })
     .then(function (data) {
-      console.log("data", data);
+      //console.log("data", data);
 
       artistData = data;
-
-      console.log("TOP ARTISTS SUCCESSFULLY FETCHED");
-
-      return data;
     });
 
   return result;
@@ -354,18 +367,14 @@ function fetchCountryTopTracks(countryName) {
 
   var result = fetch(url)
     .then(function (response) {
-      console.log("response", response);
+      //console.log("response", response);
 
       return response.json();
     })
     .then(function (data) {
-      console.log("data", data);
+      //console.log("data", data);
 
       trackData = data;
-
-      console.log("TOP TRACKS SUCCESSFULLY FETCHED");
-
-      return data;
     });
 
   return result;
@@ -448,12 +457,145 @@ function fetchGlobalTopTracks() {
 }
 
 /*
+ *  Generates one page of top track results, equivalent to 10 results.
+ *
+ *  Inputs:   pageIndex:    The index of the page that we are creating. Page indexes start at 1 and end at five, so there is
+ *                          the valid inputs are 1, 2, 3, 4, or 5.
+ *  Returns:  artistList:   An HTML element representing a list of top artists that is ready to be inserted as the body of the table element.
+ */
+function generateArtistTablePage(pageIndex) {
+  var artistList = document.createElement("tbody");
+
+  /* The index we are using is pageIndex-1 as the pages start at index 1, but the array of data that we get back starts at 0, so we have to adjust for that. */
+  var index = pageIndex - 1;
+
+  /* 
+   *  If we are creating, say, page 1 of the results, we need to iterate from 0-10. For page 2, , we will need to iterate through indices 10-19, etc....
+   *  So, we need to make a number that is equal to 10 * index, set i to that number, and then have the for loop iterate through the next 10 results.
+   */
+  var startIndex = index * MAX_RESULTS_PER_PAGE;
+  for (var i = startIndex; i < (startIndex + MAX_RESULTS_PER_PAGE); i++) {
+    var artistRow = document.createElement("tr");
+
+    artistRow.innerHTML =
+      "<th>" +
+      (i + 1) +
+      "</th> <td> <p>" +
+      artistData.topartists.artist[i].name +
+      "</p> </td>";
+    artistRow.setAttribute("data-artist", "Top-" + (i + 1));
+
+    var artistName = artistData.topartists.artist[i].name;
+    var dataCell = document.createElement("td");
+    artistRow.appendChild(dataCell);
+
+    var artistImage = document.createElement("img");
+    fetchArtistImageURL(artistName, artistImage);
+    $(artistImage).addClass("image is-24x24");
+    dataCell.appendChild(artistImage);
+
+    artistList.appendChild(artistRow);
+  }
+
+  return artistList;
+}
+
+/*
+ *  Generates one page of top track results, equivalent to 10 results.
+ *
+ *  Inputs:   pageIndex:    The index of the page that we are creating. Page indexes start at 1 and end at five, so there is
+ *                          the valid inputs are 1, 2, 3, 4, or 5.
+ *  Returns:  trackList:    An HTML element representing a list of top tracks that is ready to be inserted as the body of the table element.
+ */
+function generateTrackTablePage(pageIndex) {
+  var trackList = document.createElement("tbody");
+
+  /* The index we are using is pageIndex-1 as the pages start at index 1, but the array of data that we get back starts at 0, so we have to adjust for that. */
+  var index = pageIndex - 1;
+
+  /* 
+   *  If we are creating, say, page 1 of the results, we need to iterate from 0-10. For page 2, , we will need to iterate through indices 10-19, etc....
+   *  So, we need to make a number that is equal to 10 * index, set i to that number, and then have the for loop iterate through the next 10 results.
+   */
+  var startIndex = index * MAX_RESULTS_PER_PAGE;
+  for (var i = startIndex; i < (MAX_RESULTS_PER_PAGE + startIndex); i++) {
+    var trackRow = document.createElement("tr");
+
+    trackRow.innerHTML =
+      "<th>" +
+      (i + 1) +
+      " </th> <td> <p>  " +
+      trackData.tracks.track[i].name +
+      "-by " +
+      trackData.tracks.track[i].artist.name +
+      "</p> </td>";
+
+    trackRow.setAttribute("data-track", "Top-" + (i + 1));
+
+    var artistName = trackData.tracks.track[i].artist.name;
+    var dataCell = document.createElement("td");
+    trackRow.appendChild(dataCell);
+
+    var artistImage = document.createElement("img");
+    fetchArtistImageURL(artistName, artistImage);
+    $(artistImage).addClass("image is-24x24");
+    dataCell.appendChild(artistImage);
+
+    trackList.appendChild(trackRow);
+  }
+
+  return trackList;
+}
+
+/*
+ *  Logic for the pagination buttons on click.
+ *  When the pagination button is clicked we must:
+ *    1. If the clicked element is not already active:
+ *      a. Remove the active state from the active paginated element.
+ *      b. Add the active state to the clicked element.
+ *      c. Display the chart.
+ */
+function paginationButtonOnClick(event) {
+  var clickedElement = $(event.target);
+
+  /* 1. If the clicked element is not already active: */
+  if (!clickedElement.is(".is-current")) {
+    var currentPaginatedElement = $(".is-current");
+
+    /* 1. a. Remove the active state from the current paginated element. */
+    currentPaginatedElement.removeClass("is-current");
+
+    /* 1. b. Add the active state to the clicked element. */
+    clickedElement.addClass("is-current");
+
+    /* c. Display the chart. */
+    displayChart();
+  }
+}
+
+/*
+ *  This function just resets the currently selected pagination link to page 1.
+ *  In order to set the currently selected page to page 1 we must:
+ *    1. Remove the is-current class from the currently selected pagination link.
+ *    2. Add the is-current class to the first pagination link.
+ */
+function resetPaginationLink() {
+  /* 1. Remove the is-current class from the currently selected pagination link. */
+  currentlySelectedElement = $(".is-current");
+  currentlySelectedElement.removeClass("is-current");
+
+  /* 2. Add the is-current class to the first pagination link. */
+  firstPaginationLinkElement.addClass("is-current");
+}
+
+/*
  *  This function contains the logic for when the top artists button is clicked.
  *  When the top artists button is clicked:
  *    1. If the top artists button isn't already active:
  *    2. Remove the active state from the top tracks button.
  *    3. Add the active state to the top artists button.
- *    4. Display the results for the top artists from the currently selected country.
+ *    4. Set the current pagination link to the first page.
+ *    5. Display the results for the top artists from the currently selected country.
  */
 function topArtistsOnClick(event) {
   /* The active state is actually held in the parent of the top artists button. */
@@ -467,14 +609,11 @@ function topArtistsOnClick(event) {
     /* 3. Add the active state to the top artists button. */
     liParent.addClass("is-active");
 
-    /* 4. Display the results for the top artists from the currently selected country, or the globe if no country is selected. */
-    if (!currentlySelectedCountry) {
-      displayGlobalTopArtists();
-    } else {
-      displayCountryTopArtists(currentlySelectedCountry);
-    }
-  } else {
-    //console.log("TOP ARTISTS BUTTON ALREADY ACTIVE");
+    /* 4. Set the current pagination link to the first page. */
+    resetPaginationLink();
+
+    /* 5. Display the results for the top artists from the currently selected country, or the globe if no country is selected. */
+    displayChart();
   }
 }
 
@@ -484,7 +623,8 @@ function topArtistsOnClick(event) {
  *    1.  If the top tracks button isn't already active:
  *    2.  Remove the active state from the top artists button.
  *    3.  Add the active state to the top tracks button.
- *    4.  Fetch and display the results for the top tracks from the currently selected country.
+ *    4.  Set the current pagination link to the first page.
+ *    5.  Display the results for the top tracks from the currently selected country.
  */
 function topTracksOnClick(event) {
   /* The active state is actually held in the parent of the top artists button. */
@@ -498,26 +638,13 @@ function topTracksOnClick(event) {
     /* 3.  Add the active state to the top tracks button. */
     liParent.addClass("is-active");
 
-    /* 4. Fetch and display the results for the top tracks from the currently selected country, or the globe if no country is selected. */
-    if (global) {
-      displayGlobalTopTracks();
-    } else {
-      displayCountryTopTracks(currentlySelectedCountry);
-    }
+    /* 4. Set the current pagination link to the first page. */
+    resetPaginationLink();
+
+    /* 5. Display the results for the top tracks from the currently selected country, or the globe if no country is selected. */
+    displayChart();
   }
 }
-
-// var worldjsonPath = "./assets/custom.geo.json"
-// function getJSON(worldjsonPath) {
-//     fetch(worldjsonPath)
-//         .then(function (data) {
-//             console.log(data);
-//             worldJSON = JSON.parse(data);
-//             console.log(worldJSON);
-//         });
-// }
-
-// getJSON(worldjsonPath);
 
 var map = L.map("map", {
   center: [0, 0],
@@ -579,16 +706,13 @@ geojson.eachLayer(function (layer) {
       layer.feature.properties.label_x,
     ]);
     countryName = layer.feature.properties.name_long;
-    //name // iso_n3: 3 digit code // iso_a3: 3 character code//
-    console.log(countryName); //sucessfully getting the country code
 
     addingButtons();
     currentlySelectedCountry = countryName; // We need to set this when a country is clicked in case we switch tabs.
-    fetchCountryData(countryName);
+    fetchAndDisplayCountryData(countryName);
     global = false;
   });
   // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
-  // console.log("test");
 });
 
 // to generate a button of previously clicked on countries
@@ -611,7 +735,7 @@ $(function recallCountry() {
     var coordinates = previousCountry.split(",");
     console.log(coordinates);
     map.setView([coordinates[0], coordinates[1]], 4);
-    var countryData = fetchCountryData(countryName);
+    fetchAndDisplayCountryData(countryName);
   });
 });
 
@@ -619,3 +743,4 @@ map.fitBounds(geojson.getBounds());
 
 topTracksButton.on("click", topTracksOnClick);
 topArtistsButton.on("click", topArtistsOnClick);
+$(".pagination-link").on("click", paginationButtonOnClick);
