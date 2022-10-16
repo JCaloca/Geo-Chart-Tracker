@@ -1,81 +1,135 @@
 main {
-    font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 #map {
-    height: 900px;
-    width: 100vw;
+  height: 900px;
+  width: 100vw;
 }
 
 header {
-    height: 100px;
-    background: linear-gradient(to right, rgba(232, 242, 255, 0.902), rgba(78, 97, 195, 0.84), rgb(70, 94, 211));
+  height: 100px;
+  background: linear-gradient(
+    to right,
+    rgba(232, 242, 255, 0.902),
+    rgba(78, 97, 195, 0.84),
+    rgb(70, 94, 211)
+  );
 }
 
 h1 {
-    height: max-content;
-    font-weight: bolder;
-    /* //surprised this works with Google fonts */
-    background: linear-gradient(to right, #ffebd2 0%, #fddae1 33%, #aadeff 66%, #ddc3ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  height: max-content;
+  font-weight: bolder;
+  /* //surprised this works with Google fonts */
+  background: linear-gradient(
+    to right,
+    #ffebd2 0%,
+    #fddae1 33%,
+    #aadeff 66%,
+    #ddc3ff 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 main {
-    position: relative;
+  position: relative;
 }
 
 #chart {
-    background-color: rgba(238, 237, 255, 0.936);
+  background-color: rgba(238, 237, 255, 0.936);
 
-    position: absolute;
+  position: absolute;
 
-    min-width: 400px;
+  min-width: 400px;
 
-    top: 0;
-    right: 0;
+  top: 0;
+  right: 0;
 
-    z-index: 651;
+  z-index: 651;
 
-    transform: translate(-1em, 1em);
+  transform: translate(-1em, 1em);
 }
 
 #global-toggle ul {
-    height: 110%;
+  height: 110%;
 
-    border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
 }
 
 #global-toggle ul li {
-    height: 100%;
+  height: 100%;
 }
 
 #global-toggle ul li a {
-    height: 100%;
+  height: 100%;
 }
 
 #toggle-bar {
-    height: 50%;
+  height: 50%;
 }
 
 #toggle {
-    font-family: 'Delius Swash Caps', cursive;
+  font-family: "Delius Swash Caps", cursive;
 }
 
 #chart-togg {
-    background: transparent;
-    border-style: none;
-    border: none;
+  background: transparent;
+  border-style: none;
+  border: none;
 }
 
 #visBtn {
-    background: transparent;
-    border-style: none;
-    border: none;
+  background: transparent;
+  border-style: none;
+  border: none;
 }
 
 #chart-togg:hover #visBtn {
-    background: transparent;
-    border-style: none;
-    border: none;
+  background: transparent;
+  border-style: none;
+  border: none;
+}
+
+#delete-container {
+  margin: 20px;
+}
+
+footer {
+  background: linear-gradient(
+    to right,
+    rgba(232, 242, 255, 0.902),
+    rgba(78, 97, 195, 0.84),
+    rgb(70, 94, 211)
+  );
+}
+
+footer p {
+  height: max-content;
+  font-weight: bolder;
+  /* //surprised this works with Google fonts */
+  background: linear-gradient(
+    to right,
+    #ffebd2 0%,
+    #fddae1 33%,
+    #aadeff 66%,
+    #ddc3ff 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+footer a:link {
+  height: max-content;
+  font-weight: bolder;
+  /* //surprised this works with Google fonts */
+  background: linear-gradient(
+    to right,
+    #ffebd2 0%,
+    #fddae1 33%,
+    #aadeff 66%,
+    #ddc3ff 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
