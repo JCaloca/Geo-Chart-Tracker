@@ -669,7 +669,7 @@ function globalToggleButtonOnClick(event) {
     currentlySelectedFeature = null;
 
     /* 5. Zoom out on the map to the global view. */
-    map.fitWorld();
+    zoomToGlobe();
 
     /* 6. Fetch and display the global top charts. */
     fetchAndDisplayGlobalData();
@@ -984,15 +984,20 @@ function topTracksOnClick(event) {
   }
 }
 
+/* Zooms to the center of the Earth, where all countries should be visible. */
+function zoomToGlobe() {
+  map.setView([0, 0], 2);
+}
+
 map = L.map("map", {
   center: [0, 0],
-  maxZoom: 4,
+  maxZoom: 5
 });
 map.setMaxBounds([
   [-85.0511, -180],
-  [85.0511, 180],
+  [85.0511, 180]
 ]);
-map.fitWorld();
+zoomToGlobe();
 map.createPane("labels");
 map.getPane("labels").style.zIndex = 650; //always in the front
 map.getPane("labels").style.pointerEvents = "none";
@@ -1045,7 +1050,7 @@ geojson.eachLayer(function (layer) {
       4
     );
 
-    localStorage.setItem(layer.feature.properties.name, [
+    localStorage.setItem(layer.feature.properties.name_long, [
       layer.feature.properties.label_y,
       layer.feature.properties.label_x,
     ]);
@@ -1075,8 +1080,8 @@ function addingButtons() {
       "is-rounded",
       "is-normal",
       "is-responsive",
-      "mt-3",
-      "mb-3",
+      "mt-1",
+      "mb-1",
       "mx-1"
     );
     searchHistory.append(saveButton);
@@ -1101,6 +1106,7 @@ $(function recallCountry() {
     setCountryAsSelectedAndStyle(countryName);
     this.classList.remove("is-primary");
     this.classList.add("is-warning");
+    console.log(countryName);
     var previousCountry = localStorage.getItem(countryName);
     var coordinates = previousCountry.split(",");
     console.log(coordinates);
@@ -1145,8 +1151,8 @@ function buttonOnRefresh() {
         "is-rounded",
         "is-normal",
         "is-responsive",
-        "mt-3",
-        "mb-3",
+        "mt-1",
+        "mb-1",
         "mx-1"
       );
       searchHistory.append(saveButton);
