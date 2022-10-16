@@ -7,6 +7,9 @@ var globalToggleButton = $("#global-toggle-button");
 var visBtn = $("#visBtn");
 var chartDrawer = $("#chartDrawer");
 
+/* I stole this link from one of those placeholder image URLs Last.fm sends as an artist image. */
+const placeHolderImageURL = "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png";
+
 const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
 const lastFMSharedSecret = "805e3e44ae25a3661eb4eaca62959ccf"; // Not sure what this is, just keeping it here in case I need it later.
@@ -137,6 +140,10 @@ function displayTopArtists(pageIndex) {
 
   //if artistData is returning a error
   if (artistData.error) {
+
+    /* I need to hide all the pagination links here in case there's an error fetching data. */
+    hideAllPaginationLinks();
+
     //not last.fm supported
     var mapCont = document.getElementById("map");
     mapCont.classList.add("is-invisible"); //hide map
@@ -171,7 +178,20 @@ function displayTopArtists(pageIndex) {
     if (global) {
       chartHeaderElement.text(regionText + " Artists:"); // This is a jQuery Object, not a regular DOM element.
     } else {
-      chartHeaderElement.text("Top Artists " + regionText);
+      //console.log(trackData.tracks.track.length);
+
+      var artistList;
+      if (global) {
+        artistList = artistData.artists;
+      } else {
+        artistList = artistData.topartists;
+      }
+
+      if (artistList.artist.length) {
+        chartHeaderElement.text("Top Artists " + regionText);
+      } else {
+        chartHeaderElement.text("No Trending Data Available");
+      }
     }
 
     var artistList = generateArtistTablePage(pageIndex);
@@ -195,6 +215,9 @@ function displayTopTracks(pageIndex) {
 
   //if trackData is returning a error
   if (trackData.error) {
+    /* I need to hide all the pagination links here in case there's an error fetching data. */
+    hideAllPaginationLinks();
+
     //not last.fm supported
     var mapCont = document.getElementById("map");
     mapCont.classList.add("is-invisible"); //hide map
@@ -228,7 +251,12 @@ function displayTopTracks(pageIndex) {
     if (global) {
       chartHeaderElement.text(regionText + " Tracks:"); // This is a jQuery Object, not a regular DOM element.
     } else {
-      chartHeaderElement.text("Top Tracks " + regionText);
+      //console.log(trackData.tracks.track.length);
+      if (trackData.tracks.track.length) {
+        chartHeaderElement.text("Top Tracks " + regionText);
+      } else {
+        chartHeaderElement.text("No Trending Data Available");
+      }
     }
     var trackList = generateTrackTablePage(pageIndex);
     tracks.appendChild(trackList);
@@ -250,6 +278,8 @@ function displayTopTracks(pageIndex) {
  *      imageElement:   The vanilla JS DOM Element of the image whose source we need to set.
  */
 function fetchArtistImageURL(artistName, imageElement) {
+  artistName = artistName.replace("'", "%27"); // Fixes Guns N' Roses not displaying correctly
+
   var url =
     "https://rest.bandsintown.com/artists/" +
     artistName +
@@ -258,15 +288,18 @@ function fetchArtistImageURL(artistName, imageElement) {
 
   fetch(url)
     .then(function (response) {
-      //console.log("response", response);
-
       return response.json();
     })
     .then(function (data) {
-      //console.log("data", data);
-
-      var imageURL = data.thumb_url;
-      imageElement.setAttribute("src", imageURL);
+      if (!data.error) {
+        var imageURL = data.thumb_url;
+        imageElement.setAttribute("src", imageURL);
+      } else {
+        Promise.reject(response);
+      }
+    })
+    .catch(function (response) {
+      imageElement.setAttribute("src", "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png");
     });
 }
 
@@ -299,6 +332,7 @@ function fetchAndDisplayCountryData(countryName) {
 
   /* 5. Then, once both fetches are complete: */
   Promise.all([first, second]).then(function () {
+
     setNumPages();
     toggleTopTracks();
 
@@ -363,12 +397,11 @@ function fetchCountryTopArtists(countryName) {
 
   var result = fetch(url)
     .then(function (response) {
-      console.log("response", response);
 
       return response.json();
     })
     .then(function (data) {
-      console.log("data", data);
+      console.log(data);
 
       artistData = data;
     });
@@ -395,12 +428,11 @@ function fetchCountryTopTracks(countryName) {
 
   var result = fetch(url)
     .then(function (response) {
-      console.log("response", response);
 
       return response.json();
     })
     .then(function (data) {
-      console.log("data", data);
+      //console.log(data);
 
       trackData = data;
     });
@@ -427,7 +459,7 @@ function fetchGlobalTopArtists() {
       return response.json();
     })
     .then(function (data) {
-      console.log("data", data);
+      console.log(data);
 
       artistData = data;
     });
@@ -454,7 +486,6 @@ function fetchGlobalTopTracks() {
       return response.json();
     })
     .then(function (data) {
-      console.log("data", data);
 
       trackData = data;
     });
@@ -645,6 +676,12 @@ function globalToggleButtonOnClick(event) {
   }
 }
 
+function hideAllPaginationLinks() {
+  for (i = 1; i <= 5; i++) {
+    hidePaginationLink(i);
+  }
+}
+
 function hidePaginationLink(pageIndex) {
   var pageLinkElement = $("#page-" + pageIndex);
   if (!pageLinkElement.is(".is-invisible")) {
@@ -662,7 +699,8 @@ function highlightCountry(e) {
   layer.setStyle({
     weight: 3,
     fillColor: "#465ed3",
-    color: "#c2415f",
+    color: "#F0F8FF",
+    // color: "#c2415f",
     dashArray: "",
     fillOpacity: 0.7,
   });
@@ -823,9 +861,7 @@ function setNumArtistPages() {
       numResults = artistData.topartists.artist.length;
     }
 
-    console.log("NUM ARTIST RESULTS: " + numResults);
     var numPages = Math.ceil(numResults / MAX_RESULTS_PER_PAGE);
-    console.log("NUM ARTIST PAGES: " + numPages);
     numTopArtistPages = numPages;
   }
 }
@@ -844,9 +880,7 @@ function setNumPages() {
 function setNumTrackPages() {
   if (!trackData.error) {
     var numResults = trackData.tracks.track.length;
-    console.log("NUM TRACK RESULTS: " + numResults);
     var numPages = Math.ceil(numResults / MAX_RESULTS_PER_PAGE);
-    console.log("NUM TRACK PAGES: " + numPages);
     numTopTrackPages = numPages;
   }
 }
