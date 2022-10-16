@@ -6,7 +6,7 @@
 header {
     height: 100px;
 
-    background: linear-gradient(to right, aliceblue, slateblue);
+    background: linear-gradient(to right, rgb(175, 200, 231), rgba(78, 97, 195, 0.84), rgb(70, 94, 211));
 }
 
 h1 {
