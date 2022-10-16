@@ -9,25 +9,21 @@ main {
 
 header {
   height: 100px;
-  background: linear-gradient(
-    to right,
-    rgba(232, 242, 255, 0.902),
-    rgba(78, 97, 195, 0.84),
-    rgb(70, 94, 211)
-  );
+  background: linear-gradient(to right,
+      rgba(232, 242, 255, 0.902),
+      rgba(78, 97, 195, 0.84),
+      rgb(70, 94, 211));
 }
 
 h1 {
   height: max-content;
   font-weight: bolder;
   /* //surprised this works with Google fonts */
-  background: linear-gradient(
-    to right,
-    #ffebd2 0%,
-    #fddae1 33%,
-    #aadeff 66%,
-    #ddc3ff 100%
-  );
+  background: linear-gradient(to right,
+      #ffebd2 0%,
+      #fddae1 33%,
+      #aadeff 66%,
+      #ddc3ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -96,25 +92,21 @@ main {
 }
 
 footer {
-  background: linear-gradient(
-    to right,
-    rgba(232, 242, 255, 0.902),
-    rgba(78, 97, 195, 0.84),
-    rgb(70, 94, 211)
-  );
+  background: linear-gradient(to right,
+      rgba(232, 242, 255, 0.902),
+      rgba(78, 97, 195, 0.84),
+      rgb(70, 94, 211));
 }
 
 footer p {
   height: max-content;
   font-weight: bolder;
   /* //surprised this works with Google fonts */
-  background: linear-gradient(
-    to right,
-    #ffebd2 0%,
-    #fddae1 33%,
-    #aadeff 66%,
-    #ddc3ff 100%
-  );
+  background: linear-gradient(to right,
+      #ffebd2 0%,
+      #fddae1 33%,
+      #aadeff 66%,
+      #ddc3ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -123,13 +115,11 @@ footer a:link {
   height: max-content;
   font-weight: bolder;
   /* //surprised this works with Google fonts */
-  background: linear-gradient(
-    to right,
-    #ffebd2 0%,
-    #fddae1 33%,
-    #aadeff 66%,
-    #ddc3ff 100%
-  );
+  background: linear-gradient(to right,
+      #ffebd2 0%,
+      #fddae1 33%,
+      #aadeff 66%,
+      #ddc3ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
