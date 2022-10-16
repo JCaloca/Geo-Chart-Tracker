@@ -24,21 +24,33 @@
   <!-- The map and charts are wrapped in main to be able to easily position the charts over the map -->
   <main>
     <section id="chart" class="card">
-      <div id="toggle" class="tabs is-toggle is-fullwidth card-header mb-0">
-        <ul>
-          <li class="is-active">
-            <a id="top-tracks-button">
-              <span class="icon is-small"><i class="fa-solid fa-record-vinyl" aria-hidden="true"></i></span>
-              <span>Top Tracks</span>
-            </a>
-          </li>
-          <li>
-            <a id="top-artists-button">
-              <span class="icon is-small"><i class="fa-solid fa-palette" aria-hidden="true"></i></span>
-              <span>Top Artists</span>
-            </a>
-          </li>
-        </ul>
+      <div id="toggle-bar" class="m-0 p-0">
+        <div id="toggle" class="tabs is-boxed mb-0 mr-0 p-0">
+          <ul>
+            <li class="is-active">
+              <a id="top-tracks-button">
+                <span class="icon is-small"><i class="fa-solid fa-record-vinyl" aria-hidden="true"></i></span>
+                <span>Top Tracks</span>
+              </a>
+            </li>
+            <li>
+              <a id="top-artists-button">
+                <span class="icon is-small"><i class="fa-solid fa-palette" aria-hidden="true"></i></span>
+                <span>Top Artists</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <!-- Toggles are supposed to be used with a set of mutually exclusive options, but I like the style and I will use it here anyway. -->
+        <div id="global-toggle" class="tabs is-toggle is-right">
+          <ul>
+            <li class="is-active">
+              <a id="global-toggle-button">
+                <span class="icon is-small"><i class="fa-solid fa-globe"></i></span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="card-content pb-1">
         <h2 id="chart-header" class="is-size-3 has-text-weight-bold"></h2>

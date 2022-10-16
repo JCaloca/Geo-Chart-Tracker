@@ -32,9 +32,10 @@ main {
     transform: translate(-1em, 1em);
 }
 
-/* I need all of these statements below to make the global toggle button the same height as the other tabs. sooo annoying */
-#global-toggle ul {
-    height: 100%;
+#toggle-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 #global-toggle ul li {
