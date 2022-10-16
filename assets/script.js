@@ -4,6 +4,8 @@ var topTracksButton = $("#top-tracks-button");
 var topArtistsButton = $("#top-artists-button");
 var firstPaginationLinkElement = $("#page-1");
 var globalToggleButton = $("#global-toggle-button");
+var visBtn = $("#visBtn");
+var chartDrawer = $("#chartDrawer");
 
 const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
@@ -140,9 +142,9 @@ function displayTopArtists(pageIndex) {
     mapCont.classList.add("is-invisible"); //hide map
     charts.classList.add("is-invisible"); //get rid of charts durring pop up
     content.innerHTML =
-      "<p class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to " +
+      "<h2 class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to " +
       countryName +
-      "'s trending data. Feel free to click on another country! </p>";
+      "'s trending data. Feel free to click on another country! </h2>";
     modal.classList.add("is-active");
     // additional feedback when country is not supported instead showing last searched
     chartHeaderElement.text("No Trending Data Available");
@@ -1077,6 +1079,17 @@ topTracksButton.on("click", topTracksOnClick);
 topArtistsButton.on("click", topArtistsOnClick);
 $(".pagination-link").on("click", paginationButtonOnClick);
 globalToggleButton.on("click", globalToggleButtonOnClick);
+$(visBtn).on("click", ToggChart);
+
+function ToggChart() {
+  if (chartDrawer.data("vis") === "max") {
+    chartDrawer.addClass("is-hidden");
+    chartDrawer.data("vis", "min");
+  } else {
+    chartDrawer.removeClass("is-hidden");
+    chartDrawer.data("vis", "max");
+  }
+};
 
 //fn to get anything form local storage and display the previous load's selections
 function buttonOnRefresh() {

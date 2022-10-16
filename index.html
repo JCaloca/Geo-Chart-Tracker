@@ -29,10 +29,10 @@
 
   <!-- The map and charts are wrapped in main to be able to easily position the charts over the map -->
   <main>
-    <section id="chart" class="card">
+    <section id="chart" class="card column">
       <div id="toggle-bar" class="columns mb-0">
-        <div id="toggle" class="tabs is-boxed m-0 pr-0 column is-9">
-          <ul>
+        <div id="toggle" class="tabs is-boxed m-0 pr-0 pb-0 column is-8 is-mobile is-centered">
+          <ul clss='column'>
             <li class="is-active">
               <a id="top-tracks-button">
                 <span class="icon is-small"><i class="fa-solid fa-record-vinyl" aria-hidden="true"></i></span>
@@ -48,8 +48,8 @@
           </ul>
         </div>
         <!-- Toggles are supposed to be used with a set of mutually exclusive options, but I like the style and I will use it here anyway. -->
-        <div id="global-toggle" class="tabs is-toggle pl-0 column is-3 is-right">
-          <ul>
+        <div id="global-toggle" class="tabs is-toggle p-0 m-0 column is-2 is-mobile is-centered">
+          <ul class="column">
             <li class="is-active">
               <a id="global-toggle-button">
                 <span class="icon is-small"><i class="fa-solid fa-globe"></i></span>
@@ -57,8 +57,19 @@
             </li>
           </ul>
         </div>
+        <!-- to expand / minimize charts for better visibility -->
+        <div id="chart-togg" class="tabs is-toggle pl-3 pb-0 column is-2 is-mobile is-centered">
+          <ul>
+            <li>
+              <a id="visBtn">
+                <span class="icon is-small is-centered mt-1"><i class="fa-solid fa-xmark"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="card-content py-1">
+      <div class="card-content py-1" data-vis="max" id="chartDrawer">
         <h2 id="chart-header" class="is-size-3 has-text-weight-bold pb-2"></h2>
         <table id="chart-table" class="table is-flex is-justify-content-center is-hoverable">
           <thead id="chart-table-header">
