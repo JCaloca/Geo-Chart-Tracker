@@ -1,10 +1,19 @@
+html {
+  overflow-y: auto;
+
+  background: linear-gradient(to right,
+      rgba(232, 242, 255, 0.902),
+      rgba(78, 97, 195, 0.84),
+      rgb(70, 94, 211));
+}
+
 main {
   font-family: "Poppins", sans-serif;
 }
 
 #map {
   height: 900px;
-  width: 100vw;
+  width: 100%;
 }
 
 header {
@@ -92,10 +101,7 @@ main {
 }
 
 footer {
-  background: linear-gradient(to right,
-      rgba(232, 242, 255, 0.902),
-      rgba(78, 97, 195, 0.84),
-      rgb(70, 94, 211));
+  width: 100%;
 }
 
 footer p {
@@ -122,4 +128,15 @@ footer a:link {
       #ddc3ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.purple {
+  border: none;
+  background-color: #443b96;
+  color: white;
+}
+
+.purple:hover {
+  background-color: #352e77;
+  color: white;
 }

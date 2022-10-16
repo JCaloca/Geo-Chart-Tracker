@@ -1071,7 +1071,7 @@ function addingButtons() {
     saveButton.classList.add(
       "recall",
       "button",
-      "is-primary",
+      "purple",
       "is-rounded",
       "is-normal",
       "is-responsive",
@@ -1141,7 +1141,7 @@ function buttonOnRefresh() {
       saveButton.classList.add(
         "recall",
         "button",
-        "is-primary",
+        "purple",
         "is-rounded",
         "is-normal",
         "is-responsive",
