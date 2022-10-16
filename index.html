@@ -16,9 +16,15 @@
 
 <body>
   <header class="is-flex is-justify-content-center is-align-items-center">
+    <lord-icon src="https://cdn.lordicon.com/oghxgbxh.json" trigger="boomerang"
+      colors="primary:#fca943,secondary:#c2415f" stroke="85" axis-y="33" style="width:50px;height:50px">
+    </lord-icon>
     <h1 class="title is-1 has-text-weight-bold has-text-white">
       Geo Chart Tracker
     </h1>
+    <lord-icon src="https://cdn.lordicon.com/uqcojfcp.json" trigger="boomerang"
+      colors="primary:#4be1ec,secondary:#cb5eee" stroke="80" axis-y="33" style="width:50px;height:50px">
+    </lord-icon>
   </header>
 
   <!-- The map and charts are wrapped in main to be able to easily position the charts over the map -->
@@ -83,9 +89,17 @@
       </div>
     </section>
     <div id="map"></div>
+    <!-- added hard coded bulma modal, default hidden -->
     <div id="alert" class="modal">
-      <!-- added hard coded bulma modal, default hidden -->
-      <button class="modal-close is-large" aria-label="close"></button>
+      <div class="modal-background"></div>
+      <!-- //error icon -->
+      <lord-icon src="https://cdn.lordicon.com/bmnlikjh.json" trigger="loop" delay="2000" colors="primary:#c2415f"
+        state="hover-1" style="width:250px;height:250px">
+      </lord-icon>
+      <!-- special container to put our message -->
+      <div id="errmsg" class="modal-content">
+      </div>
+      <button class="modal-close is-large" aria-label="close" id="close"></button>
     </div>
     <section class="container">
       <div class="block" id="search-history"></div>
@@ -97,6 +111,7 @@
     </section>
   </main>
 
+  <script src="https://cdn.lordicon.com/pzdvqjsp.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"
     integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"

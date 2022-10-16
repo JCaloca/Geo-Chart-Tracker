@@ -71,7 +71,7 @@ var selectedStyle = {
  */
 function countryStyle(feature) {
   return {
-    fillColor: "transparent",
+    fillColor: "#443b96",
     weight: 2,
     opacity: 1,
     color: "#300948",
@@ -129,27 +129,20 @@ function displayTopArtists(pageIndex) {
   var charts = document.getElementById("chart");
   var artist = document.getElementById("chart-table");
   var modal = document.getElementById("alert");
+  var content = document.getElementById("errmsg");
+  content.innerHTML = "";
   //artist.innerHTML = ""; //clearing the box ahead of time.
-  modal.innerHTML =
-    "<button id='close' class='modal-close is-large' aria-label='close'></button>"; //resetting modal box for next pop up with just the button
-  // modal.style.zIndex = "650"; // our map ended up has to be set 649 to get this to layer on top
 
   //if artistData is returning a error
   if (artistData.error) {
     //not last.fm supported
-    var modalCont = document.createElement("div");
-    var modalBack = document.createElement("div");
     var mapCont = document.getElementById("map");
     mapCont.classList.add("is-invisible"); //hide map
     charts.classList.add("is-invisible"); //get rid of charts durring pop up
-    modalCont.classList.add("modal-content"); // bulma modal content class
-    modalBack.classList.add("modal-background", "has-background-dark");
-    modalCont.innerHTML =
+    content.innerHTML =
       "<p class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to " +
       countryName +
-      "'s trending data. Feel free to click on another country! <p>";
-    modal.prepend(modalCont); // add it to our hard-coded html box, before the button on 25
-    modal.prepend(modalBack); // almost missed the background
+      "'s trending data. Feel free to click on another country! </p>";
     modal.classList.add("is-active");
     // additional feedback when country is not supported instead showing last searched
     chartHeaderElement.text("No Trending Data Available");
@@ -195,26 +188,19 @@ function displayTopTracks(pageIndex) {
   var charts = document.getElementById("chart");
   var tracks = document.getElementById("chart-table");
   var modal = document.getElementById("alert");
-  modal.innerHTML =
-    "<button id='close' class='modal-close is-large' aria-label='close'></button>";
-  //resetting modal box for next pop up with just the button
+  var content = document.getElementById("errmsg");
+  content.innerHTML = "";
 
   //if trackData is returning a error
   if (trackData.error) {
     //not last.fm supported
-    var modalCont = document.createElement("div");
-    var modalBack = document.createElement("div");
     var mapCont = document.getElementById("map");
     mapCont.classList.add("is-invisible"); //hide map
     charts.classList.add("is-invisible"); //get rid of charts durring pop up
-    modalCont.classList.add("modal-content"); // bulma modal content class
-    modalBack.classList.add("modal-background", "has-background-dark");
-    modalCont.innerHTML =
-      "<p class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to " +
+    content.innerHTML =
+      "<h2 class= 'has-text-white-ter has-text-centered'>Apologies, we currently do not have access to " +
       countryName +
-      "'s trending data. Feel free to click on another country! <p>";
-    modal.prepend(modalCont); // add it to our hard-coded html box, before the button on 25
-    modal.prepend(modalBack); // almost missed the background
+      "'s trending data. Feel free to click on another country! </h2>";
     modal.classList.add("is-active");
     // additional feedback when country is not supported instead showing last searched
     chartHeaderElement.text("No Trending Data Available");
@@ -673,8 +659,8 @@ function highlightCountry(e) {
 
   layer.setStyle({
     weight: 3,
-    fillColor: "#50468f",
-    color: "#465ED3",
+    fillColor: "#465ed3",
+    color: "#c2415f",
     dashArray: "",
     fillOpacity: 0.7,
   });
