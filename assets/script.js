@@ -43,11 +43,10 @@ var regionText;
  */
 var global;
 
-
 /* I'll just set this up here so I can refer to it in a function. */
 var geojson, map;
 
-/* 
+/*
  *  Defines the style of the country on select. I'm defining it here as multiple functions use this style, so I only have to modify it here if
  *  I want to change it.
  */
@@ -55,9 +54,9 @@ var selectedStyle = {
   weight: 5,
   fillColor: "#fca943",
   color: "#465ED3",
-  dashArray: '',
+  dashArray: "",
   fillOpacity: 0.7,
-  className: "selected"
+  className: "selected",
 };
 
 /*
@@ -689,8 +688,8 @@ function resetPaginationLink() {
   firstPaginationLinkElement.addClass("is-current");
 }
 
-/* 
- *  Iterates through all of the features on the map and sets the feature as selected when layer.feature.properties.name_long matches 
+/*
+ *  Iterates through all of the features on the map and sets the feature as selected when layer.feature.properties.name_long matches
  *  the input string countryName.
  */
 function setCountryAsSelectedAndStyle(countryName) {
@@ -722,8 +721,7 @@ function setSelected(e) {
   currentlySelectedFeature = layer;
 
   /* We need to set the class of the feature to selected so that on a mouse out event the style isn't reset. */
-  layer.setStyle(selectedStyle)
-
+  layer.setStyle(selectedStyle);
 }
 
 /*
@@ -893,7 +891,7 @@ $(function recallCountry() {
     console.log(this.id);
     countryName = this.id;
 
-    /* 
+    /*
      *  Here, we need to get the feature that we are zooming to and set its state to selected
      */
     setCountryAsSelectedAndStyle(countryName);
@@ -914,7 +912,8 @@ $(".pagination-link").on("click", paginationButtonOnClick);
 //fn to get anything form local storage and display the previous load's selections
 function buttonOnRefresh() {
   var saved = localStorage;
-  if (saved) { //if locastorage exist
+  if (saved) {
+    //if locastorage exist
     for (var i = 0; i < saved.length; i++) {
       var searchHistory = document.getElementById("search-history");
       var saveButton = document.createElement("button");
@@ -934,7 +933,16 @@ function buttonOnRefresh() {
       searchHistory.append(saveButton);
     }
   } else return;
-};
+}
 buttonOnRefresh();
+
+$(function deleteStorage() {
+  var deleteBtn = document.getElementById("delete-history");
+  $(deleteBtn).click(function () {
+    localStorage.clear();
+    var searchHistory = document.getElementById("search-history");
+    $(searchHistory).empty();
+  });
+});
 
 fetchAndDisplayGlobalData();
