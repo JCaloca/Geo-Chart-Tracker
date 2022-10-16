@@ -2,7 +2,7 @@ var chartTableHeaderElement = $("#chart-table-header");
 var chartHeaderElement = $("#chart-header");
 var topTracksButton = $("#top-tracks-button");
 var topArtistsButton = $("#top-artists-button");
-var firstPaginationLinkElement = $("#first-pagination-link");
+var firstPaginationLinkElement = $("#page-1");
 var globalToggleButton = $("#global-toggle-button");
 
 const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
@@ -46,6 +46,9 @@ var global;
 
 /* I'll just set this up here so I can refer to it in a function. */
 var geojson, map;
+
+/* These variables will hold the number of pages in the top tracks tab and numTopArtistPages. These will need to be updated after every fetch. */
+var numTopTrackPages, numTopArtistPages;
 
 /*
  *  Defines the style of the country on select. I'm defining it here as multiple functions use this style, so I only have to modify it here if
@@ -308,6 +311,9 @@ function fetchAndDisplayCountryData(countryName) {
 
   /* 5. Then, once both fetches are complete: */
   Promise.all([first, second]).then(function () {
+    setNumPages();
+    toggleTopTracks();
+
     /* 5. a. We display the chart. */
     displayChart();
   });
@@ -342,6 +348,9 @@ function fetchAndDisplayGlobalData() {
 
   /* 5. Then, once both fetches are complete: */
   Promise.all([first, second]).then(function () {
+    setNumPages();
+    toggleTopTracks();
+
     /* 5. a. We display the chart. */
     displayChart();
   });
@@ -366,12 +375,12 @@ function fetchCountryTopArtists(countryName) {
 
   var result = fetch(url)
     .then(function (response) {
-      //console.log("response", response);
+      console.log("response", response);
 
       return response.json();
     })
     .then(function (data) {
-      //console.log("data", data);
+      console.log("data", data);
 
       artistData = data;
     });
@@ -398,12 +407,12 @@ function fetchCountryTopTracks(countryName) {
 
   var result = fetch(url)
     .then(function (response) {
-      //console.log("response", response);
+      console.log("response", response);
 
       return response.json();
     })
     .then(function (data) {
-      //console.log("data", data);
+      console.log("data", data);
 
       trackData = data;
     });
@@ -426,7 +435,6 @@ function fetchGlobalTopArtists() {
 
   let result = fetch(url)
     .then(function (response) {
-      console.log("response", response);
 
       return response.json();
     })
@@ -454,7 +462,6 @@ function fetchGlobalTopTracks() {
 
   let result = fetch(url)
     .then(function (response) {
-      console.log("response", response);
 
       return response.json();
     })
@@ -476,7 +483,6 @@ function fetchGlobalTopTracks() {
  *    artistList:   An HTML element representing a list of top artists that is ready to be inserted as the body of the table element.
  */
 function generateArtistTablePage(pageIndex) {
-  console.log(artistData);
   var artistList = document.createElement("tbody");
 
   /* The index we are using is pageIndex-1 as the pages start at index 1, but the array of data that we get back starts at 0, so we have to adjust for that. */
@@ -487,16 +493,27 @@ function generateArtistTablePage(pageIndex) {
    *  So, we need to make a number that is equal to 10 * index, set i to that number, and then have the for loop iterate through the next 10 results.
    */
   var startIndex = index * MAX_RESULTS_PER_PAGE;
-  for (var i = startIndex; i < startIndex + MAX_RESULTS_PER_PAGE; i++) {
-    var artistRow = document.createElement("tr");
-    var topArtistList;
 
-    /* I need to add this if statement here as the list of top artists globally is called "artists" while the list of top artists for a country is called "topartists" */
-    if (global) {
-      topArtistList = artistData.artists;
-    } else {
-      topArtistList = artistData.topartists;
-    }
+  var topArtistList;
+
+  /* I need to add this if statement here as the list of top artists globally is called "artists" while the list of top artists for a country is called "topartists" */
+  if (global) {
+    topArtistList = artistData.artists;
+  } else {
+    topArtistList = artistData.topartists;
+  }
+
+  var resultsInPage = topArtistList.artist.length - (MAX_RESULTS_PER_PAGE * (pageIndex - 1));
+  var endIndex;
+
+  if (resultsInPage < MAX_RESULTS_PER_PAGE) {
+    endIndex = resultsInPage;
+  } else {
+    endIndex = MAX_RESULTS_PER_PAGE;
+  }
+
+  for (var i = startIndex; i < startIndex + endIndex; i++) {
+    var artistRow = document.createElement("tr");
 
     artistRow.innerHTML =
       "<th>" +
@@ -561,7 +578,17 @@ function generateTrackTablePage(pageIndex) {
    *  So, we need to make a number that is equal to 10 * index, set i to that number, and then have the for loop iterate through the next 10 results.
    */
   var startIndex = index * MAX_RESULTS_PER_PAGE;
-  for (var i = startIndex; i < MAX_RESULTS_PER_PAGE + startIndex; i++) {
+
+  var resultsInPage = trackData.tracks.track.length - (MAX_RESULTS_PER_PAGE * (pageIndex - 1));
+  var endIndex;
+
+  if (resultsInPage < MAX_RESULTS_PER_PAGE) {
+    endIndex = resultsInPage;
+  } else {
+    endIndex = MAX_RESULTS_PER_PAGE;
+  }
+
+  for (var i = startIndex; i < endIndex + startIndex; i++) {
     var trackRow = document.createElement("tr");
 
     trackRow.innerHTML =
@@ -630,7 +657,12 @@ function globalToggleButtonOnClick(event) {
   }
 }
 
-
+function hidePaginationLink(pageIndex) {
+  var pageLinkElement = $("#page-" + pageIndex);
+  if (!pageLinkElement.is(".is-invisible")) {
+    pageLinkElement.addClass("is-invisible");
+  }
+}
 
 /*
  *  Defines the style of the country when the mouse hovers over it.
@@ -716,7 +748,7 @@ function resetHighlight(e) {
  */
 function resetPaginationLinks() {
   /* 1. Remove the is-current class from the currently selected pagination link. */
-  currentlySelectedElement = $(".is-current");
+  var currentlySelectedElement = $(".is-current");
   currentlySelectedElement.removeClass("is-current");
 
   /* 2. Add the is-current class to the first pagination link. */
@@ -741,6 +773,110 @@ function setCountryAsSelectedAndStyle(countryName) {
   });
 }
 
+/* 
+ *  When we toggle to the top artists tab we want to:
+ *    1. Set the state to active it is not active.
+ *    2. Remove the active state from the top tracks button if it is active.
+ *    3. Reset the currently selected pagination link.
+ *    4. Set the pagination links that are displayed for the top artists.
+ */
+function toggleTopArtists() {
+  /* 1. Set the state to active it is not active. */
+  if (!topArtistsButton.parent().is(".is-active")) {
+    topArtistsButton.parent().addClass("is-active");
+  }
+
+  /* 2. Remove the active state from the top tracks button if it is active. */
+  if (topTracksButton.parent().is(".is-active")) {
+    topTracksButton.parent().removeClass("is-active")
+  }
+
+  /* 3. Reset the currently selected pagination link. */
+  resetPaginationLinks();
+
+  /* 4. Set the pagination links that are displayed for the top artists. */
+  setArtistPaginationLinks();
+}
+
+/* 
+ *  When we toggle to the top tracks tab we want to:
+ *    1. Set the state to active it is not active.
+ *    2. Remove the active state from the top artists button if it is active.
+ *    3. Reset the currently selected pagination link.
+ *    4. Set the pagination links that are displayed for the top tracks.
+ */
+function toggleTopTracks() {
+  /* 1. Set the state to active it is not active. */
+  if (!topTracksButton.parent().is(".is-active")) {
+    topTracksButton.parent().addClass("is-active");
+  }
+
+  /* 2. Remove the active state from the top artists button if it is active. */
+  if (topArtistsButton.parent().is(".is-active")) {
+    topArtistsButton.parent().removeClass("is-active");
+  }
+
+  /* 3. Reset the currently selected pagination link. */
+  resetPaginationLinks();
+
+  /* 4. Set the pagination links that are displayed for the top tracks. */
+  setTrackPaginationLinks();
+}
+
+/*
+ *  Sets the number of pages in the artistData we got back from the fetch request.
+ */
+function setNumArtistPages() {
+  if (!artistData.error) {
+    var numResults;
+    if (global) {
+      numResults = artistData.artists.artist.length;
+    } else {
+      numResults = artistData.topartists.artist.length;
+    }
+
+    console.log("NUM ARTIST RESULTS: " + numResults);
+    var numPages = Math.ceil(numResults / MAX_RESULTS_PER_PAGE);
+    console.log("NUM ARTIST PAGES: " + numPages);
+    numTopArtistPages = numPages;
+  }
+}
+
+/*
+ *  Sets the number of pages for both the top track and top artist data.
+ */
+function setNumPages() {
+  setNumArtistPages();
+  setNumTrackPages();
+}
+
+/*
+ *  Sets the number of pages in the trackData we got back from the fetch request.
+ */
+function setNumTrackPages() {
+  if (!trackData.error) {
+    var numResults = trackData.tracks.track.length;
+    console.log("NUM TRACK RESULTS: " + numResults);
+    var numPages = Math.ceil(numResults / MAX_RESULTS_PER_PAGE);
+    console.log("NUM TRACK PAGES: " + numPages);
+    numTopTrackPages = numPages;
+  }
+}
+
+/*
+ *  There are situations where the number of results returned in a request is less than 50.
+ *  In that case, we have to set the pagination list accordingly.
+ */
+function setArtistPaginationLinks() {
+  for (var i = 1; i <= MAX_PAGES; i++) {
+    if (i <= numTopArtistPages) {
+      showPaginationLink(i);
+    } else {
+      hidePaginationLink(i);
+    }
+  }
+}
+
 /*
  *  Sets the country as selected when the user clicks a country.
  */
@@ -759,6 +895,27 @@ function setSelected(e) {
   layer.setStyle(selectedStyle);
 }
 
+function showPaginationLink(pageIndex) {
+  var pageLinkElement = $("#page-" + pageIndex);
+  if (pageLinkElement.is(".is-invisible")) {
+    pageLinkElement.removeClass("is-invisible");
+  }
+}
+
+/*
+ *  There are situations where the number of results returned in a request is less than 50.
+ *  In that case, we have to set the pagination list accordingly.
+ */
+function setTrackPaginationLinks() {
+  for (var i = 1; i <= MAX_PAGES; i++) {
+    if (i <= numTopTrackPages) {
+      showPaginationLink(i);
+    } else {
+      hidePaginationLink(i);
+    }
+  }
+}
+
 /*
  *  This function contains the logic for when the top artists button is clicked.
  *
@@ -775,14 +932,7 @@ function topArtistsOnClick(event) {
 
   /* 1. If the top artists button isn't already active: */
   if (!liParent.is(".is-active")) {
-    /* 2. Remove the active state from the top tracks button. */
-    topTracksButton.parent().removeClass("is-active");
-
-    /* 3. Add the active state to the top artists button. */
-    liParent.addClass("is-active");
-
-    /* 4. Set the current pagination link to the first page. */
-    resetPaginationLinks();
+    toggleTopArtists();
 
     /* 5. Display the results for the top artists from the currently selected country, or the globe if no country is selected. */
     displayChart();
@@ -805,14 +955,7 @@ function topTracksOnClick(event) {
 
   /* 1.  If the top tracks button isn't already active: */
   if (!liParent.is(".is-active")) {
-    /* 2.  Remove the active state from the top artists button. */
-    topArtistsButton.parent().removeClass("is-active");
-
-    /* 3.  Add the active state to the top tracks button. */
-    liParent.addClass("is-active");
-
-    /* 4. Set the current pagination link to the first page. */
-    resetPaginationLinks();
+    toggleTopTracks();
 
     /* 5. Display the results for the top tracks from the currently selected country, or the globe if no country is selected. */
     displayChart();
