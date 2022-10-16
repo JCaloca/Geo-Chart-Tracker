@@ -49,3 +49,21 @@ main {
 #toggle-bar {
     height: 50%;
 }
+
+#chart-togg {
+    background: transparent;
+    border-style: none;
+    border: none;
+}
+
+#visBtn {
+    background: transparent;
+    border-style: none;
+    border: none;
+}
+
+#chart-togg:hover #visBtn {
+    background: transparent;
+    border-style: none;
+    border: none;
+}

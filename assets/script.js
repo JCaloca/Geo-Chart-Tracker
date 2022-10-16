@@ -1080,14 +1080,17 @@ topArtistsButton.on("click", topArtistsOnClick);
 $(".pagination-link").on("click", paginationButtonOnClick);
 globalToggleButton.on("click", globalToggleButtonOnClick);
 $(visBtn).on("click", ToggChart);
-
+//min max the chart:
 function ToggChart() {
   if (chartDrawer.data("vis") === "max") {
     chartDrawer.addClass("is-hidden");
     chartDrawer.data("vis", "min");
+    visBtn.attr("style", "transform: rotate(45deg)");
   } else {
     chartDrawer.removeClass("is-hidden");
     chartDrawer.data("vis", "max");
+    visBtn.attr("style", "transform: rotate(-90deg)");
+    //-90 bc based on original position, not relative
   }
 };
 
