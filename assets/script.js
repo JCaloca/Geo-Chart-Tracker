@@ -53,8 +53,8 @@ var geojson, map;
  */
 var selectedStyle = {
   weight: 5,
-  fillColor: "666",
-  color: '#666',
+  fillColor: "#fca943",
+  color: "#465ED3",
   dashArray: '',
   fillOpacity: 0.7,
   className: "selected"
@@ -68,10 +68,10 @@ var selectedStyle = {
  */
 function countryStyle(feature) {
   return {
-    fillColor: "white",
+    fillColor: "transparent",
     weight: 2,
     opacity: 1,
-    color: "blue",
+    color: "#300948",
     dashArray: "3",
     fillOpacity: 0.7,
     className: "not-selected",
@@ -155,7 +155,7 @@ function displayTopArtists(pageIndex) {
         console.log("AlertClosed");
         mapCont.classList.remove("is-invisible");
         charts.classList.remove("is-invisible");
-        //chaning error city button to red
+        //chaning error city button to red on modal close
         errorBtn.classList.remove("is-primary");
         errorBtn.classList.remove("is-warning");
         errorBtn.classList.add("is-danger");
@@ -608,9 +608,9 @@ function highlightCountry(e) {
   var layer = e.target;
 
   layer.setStyle({
-    weight: 5,
-    fillColor: "666",
-    color: "#666",
+    weight: 3,
+    fillColor: "#50468f",
+    color: "#465ED3",
     dashArray: "",
     fillOpacity: 0.7,
   });
@@ -861,7 +861,7 @@ geojson.eachLayer(function (layer) {
 function addingButtons() {
   var searchHistory = document.getElementById("search-history");
   var saveButton = document.createElement("button");
-  var badge = document.createElement("span");
+  // var badge = document.createElement("span");
 
   if (!document.getElementById(countryName)) {
     saveButton.innerText = countryName;
@@ -910,5 +910,31 @@ $(function recallCountry() {
 topTracksButton.on("click", topTracksOnClick);
 topArtistsButton.on("click", topArtistsOnClick);
 $(".pagination-link").on("click", paginationButtonOnClick);
+
+//fn to get anything form local storage and display the previous load's selections
+function buttonOnRefresh() {
+  var saved = localStorage;
+  if (saved) { //if locastorage exist
+    for (var i = 0; i < saved.length; i++) {
+      var searchHistory = document.getElementById("search-history");
+      var saveButton = document.createElement("button");
+      saveButton.innerText = saved.key(i);
+      saveButton.setAttribute("id", saved.key(i));
+      saveButton.classList.add(
+        "recall",
+        "button",
+        "is-primary",
+        "is-rounded",
+        "is-medium",
+        "is-responsive",
+        "mt-3",
+        "mb-3",
+        "mx-1"
+      );
+      searchHistory.append(saveButton);
+    }
+  } else return;
+};
+buttonOnRefresh();
 
 fetchAndDisplayGlobalData();
