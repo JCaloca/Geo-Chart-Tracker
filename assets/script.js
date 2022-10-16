@@ -287,8 +287,9 @@ function fetchArtistImageURL(artistName, imageElement) {
  *  When we fetch and display country data we need to:
  *    1. Set the global variable to false so generateArtistTablePage() knows the correct name for the artist list in the data we get back.
  *    2. Set the region text to display as the header above the chart table.
- *    3. We'll fetch both the top track and top artist data.
- *    4. Then, once both fetches are complete:
+ *    3. Reset the pagination links as we have new data.
+ *    4. We'll fetch both the top track and top artist data.
+ *    5. Then, once both fetches are complete:
  *      a. We display the chart.
  */
 function fetchAndDisplayCountryData(countryName) {
@@ -298,13 +299,16 @@ function fetchAndDisplayCountryData(countryName) {
   /* 2. Set the region text to display as the header above the chart table. */
   regionText = "for " + countryName;
 
-  /* 3. We'll fetch both the top track and top artist data. */
+  /* 3. Reset the pagination links as we have new data. */
+  resetPaginationLinks();
+
+  /* 4. We'll fetch both the top track and top artist data. */
   let first = fetchCountryTopTracks(countryName);
   let second = fetchCountryTopArtists(countryName);
 
-  /* 4. Then, once both fetches are complete: */
+  /* 5. Then, once both fetches are complete: */
   Promise.all([first, second]).then(function () {
-    /* 4. a. We display the chart. */
+    /* 5. a. We display the chart. */
     displayChart();
   });
 }
@@ -317,8 +321,9 @@ function fetchAndDisplayCountryData(countryName) {
  *  When we fetch and display global data we need to:
  *    1. Set the global variable to true so generateArtistTablePage() knows the correct name for the artist list in the data we get back.
  *    2. Set the region text to display as the header above the chart table.
- *    3. We'll fetch both the top track and top artist data.
- *    4. Then, once both fetches are complete:
+ *    3. Reset the pagination links as we have new data.
+ *    4. We'll fetch both the top track and top artist data.
+ *    5. Then, once both fetches are complete:
  *      a. We display the chart.
  */
 function fetchAndDisplayGlobalData() {
@@ -328,13 +333,16 @@ function fetchAndDisplayGlobalData() {
   /* 2. Set the region text to display as the header above the chart table. */
   regionText = "Global Top";
 
-  /* 3. We'll fetch both the top track and top artist data. */
+  /* 3. Reset the pagination links as we have new data. */
+  resetPaginationLinks();
+
+  /* 4. We'll fetch both the top track and top artist data. */
   let first = fetchGlobalTopTracks();
   let second = fetchGlobalTopArtists();
 
-  /* 4. Then, once both fetches are complete: */
+  /* 5. Then, once both fetches are complete: */
   Promise.all([first, second]).then(function () {
-    /* 4. a. We display the chart. */
+    /* 5. a. We display the chart. */
     displayChart();
   });
 }
@@ -401,37 +409,6 @@ function fetchCountryTopTracks(countryName) {
     });
 
   return result;
-}
-
-/*
- *  Fetches the top tracks by country and city name.
- *
- *  Inputs:
- *      countryName:    The name of the country we are fetching data for as a string.
- *      metroName:      The name of the city we are fetching data for as a string.
- */
-function fetchMetroTopTracks(countryName, metroName) {
-  var url =
-    lastFMBaseURL +
-    "?method=geo.gettoptracks&country=" +
-    countryName +
-    "&location=" +
-    metroName +
-    "&api_key=" +
-    lastFMApiKey +
-    "&format=json";
-
-  fetch(url)
-    .then(function (response) {
-      console.log("response", response);
-
-      return response.json();
-    })
-    .then(function (data) {
-      console.log("data", data);
-
-      displayMetroTopTracks(data);
-    });
 }
 
 /*
@@ -533,10 +510,17 @@ function generateArtistTablePage(pageIndex) {
     var dataCell = document.createElement("td");
     artistRow.appendChild(dataCell);
 
+    /* Link the image to the last.fm artist page. */
+    var anchorElement = document.createElement("a");
+    var artistURL = topArtistList.artist[i].url;
+    anchorElement.setAttribute("href", artistURL);
+    anchorElement.setAttribute("target", "_blank");
+    dataCell.appendChild(anchorElement);
+
     var artistImage = document.createElement("img");
     fetchArtistImageURL(artistName, artistImage);
     $(artistImage).addClass("image is-24x24");
-    dataCell.appendChild(artistImage);
+    anchorElement.appendChild(artistImage);
 
     artistList.appendChild(artistRow);
   }
@@ -584,10 +568,12 @@ function generateTrackTablePage(pageIndex) {
       "<th>" +
       (i + 1) +
       " </th> <td> <p>  " +
-      trackData.tracks.track[i].name +
-      "-by " +
       trackData.tracks.track[i].artist.name +
-      "</p> </td>";
+      " - <a href=\"" +
+      trackData.tracks.track[i].url +
+      "\" target=\"_blank\">" +
+      trackData.tracks.track[i].name +
+      "</a> </p> </td>";
 
     trackRow.setAttribute("data-track", "Top-" + (i + 1));
 
@@ -595,10 +581,17 @@ function generateTrackTablePage(pageIndex) {
     var dataCell = document.createElement("td");
     trackRow.appendChild(dataCell);
 
+    /* Link the image to the last.fm artist page. */
+    var anchorElement = document.createElement("a");
+    var artistURL = trackData.tracks.track[i].artist.url;
+    anchorElement.setAttribute("href", artistURL);
+    anchorElement.setAttribute("target", "_blank");
+    dataCell.appendChild(anchorElement);
+
     var artistImage = document.createElement("img");
     fetchArtistImageURL(artistName, artistImage);
     $(artistImage).addClass("image is-24x24");
-    dataCell.appendChild(artistImage);
+    anchorElement.appendChild(artistImage);
 
     trackList.appendChild(trackRow);
   }
@@ -634,8 +627,6 @@ function globalToggleButtonOnClick(event) {
 
     /* 6. Fetch and display the global top charts. */
     fetchAndDisplayGlobalData();
-  } else {
-    //console.log("GLOBAL TOGGLE ACTIVE");
   }
 }
 
@@ -723,7 +714,7 @@ function resetHighlight(e) {
  *    1. Remove the is-current class from the currently selected pagination link.
  *    2. Add the is-current class to the first pagination link.
  */
-function resetPaginationLink() {
+function resetPaginationLinks() {
   /* 1. Remove the is-current class from the currently selected pagination link. */
   currentlySelectedElement = $(".is-current");
   currentlySelectedElement.removeClass("is-current");
@@ -791,7 +782,7 @@ function topArtistsOnClick(event) {
     liParent.addClass("is-active");
 
     /* 4. Set the current pagination link to the first page. */
-    resetPaginationLink();
+    resetPaginationLinks();
 
     /* 5. Display the results for the top artists from the currently selected country, or the globe if no country is selected. */
     displayChart();
@@ -821,7 +812,7 @@ function topTracksOnClick(event) {
     liParent.addClass("is-active");
 
     /* 4. Set the current pagination link to the first page. */
-    resetPaginationLink();
+    resetPaginationLinks();
 
     /* 5. Display the results for the top tracks from the currently selected country, or the globe if no country is selected. */
     displayChart();
@@ -851,6 +842,7 @@ var countryName; //adding this so we can pass the city clicked to the fetch func
 //     maxZoom: 19,
 //     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 // }).addTo(map);
+
 var positron = L.tileLayer(
   "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
   {
@@ -861,6 +853,7 @@ var positron = L.tileLayer(
     // maxZoom: 4
   }
 ).addTo(map);
+
 
 var positronLabels = L.tileLayer(
   "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png",
@@ -874,12 +867,13 @@ var positronLabels = L.tileLayer(
   }
 ).addTo(map);
 
+
 geojson = L.geoJson(countriesDATA, {
   style: countryStyle,
   onEachFeature: onEachCountry,
 }).addTo(map); //loading the containers and adding it to our map
 geojson.eachLayer(function (layer) {
-  layer.bindPopup(layer.feature.properties.name).on("click", function (e) {
+  layer.on("click", function (e) {
     //adding leaflet event to zoom in at the countries
     map.setView(
       [layer.feature.properties.label_y, layer.feature.properties.label_x],
