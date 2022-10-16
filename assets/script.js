@@ -3,6 +3,7 @@ var chartHeaderElement = $("#chart-header");
 var topTracksButton = $("#top-tracks-button");
 var topArtistsButton = $("#top-artists-button");
 var firstPaginationLinkElement = $("#first-pagination-link");
+var globalToggleButton = $("#global-toggle-button");
 
 const lastFMApiKey = "7103ecc963d87a0eec25ce7ff0a3508b";
 const lastFMBaseURL = "https://ws.audioscrobbler.com/2.0/";
@@ -75,6 +76,13 @@ function countryStyle(feature) {
     fillOpacity: 0.7,
     className: "not-selected",
   };
+}
+
+/* Removes the is-active class from the toggle button only if it has that class. */
+function deselectGlobalToggleButton() {
+  if (globalToggleButton.parent().is(".is-active")) {
+    globalToggleButton.parent().removeClass("is-active");
+  }
 }
 
 /*
@@ -559,7 +567,6 @@ function generateArtistTablePage(pageIndex) {
  *  (Note that {variableName} means we pull that variable name from the data that we get and it will be different for every chunk of data we get)
  */
 function generateTrackTablePage(pageIndex) {
-  console.log(trackData);
   var trackList = document.createElement("tbody");
 
   /* The index we are using is pageIndex-1 as the pages start at index 1, but the array of data that we get back starts at 0, so we have to adjust for that. */
@@ -598,6 +605,41 @@ function generateTrackTablePage(pageIndex) {
 
   return trackList;
 }
+
+/*
+ *  Houses all the logic for the global toggle button on click.
+ *  
+ *  When the toggle button is clicked we must:
+ *    1. If the global toggle button isn't already active:
+ *    2. Set the global toggle button to the active state.
+ *    3. Remove the selected state from the currently selected feature.
+ *    4. Set the currently selected feature to null.
+ *    5. Zoom out on the map to the global view.
+ *    6. Fetch and display the global top charts.
+ */
+function globalToggleButtonOnClick(event) {
+  /* 1. If the global toggle button isn't already active: */
+  if (!globalToggleButton.parent().is(".is-active")) {
+    /* 2. Set the global toggle button to the active state. */
+    globalToggleButton.parent().addClass("is-active");
+
+    /* 3. Remove the selected state from the currently selected feature. */
+    geojson.resetStyle(currentlySelectedFeature);
+
+    /* 4. Set the currently selected feature to null. */
+    currentlySelectedFeature = null;
+
+    /* 5. Zoom out on the map to the global view. */
+    map.fitWorld();
+
+    /* 6. Fetch and display the global top charts. */
+    fetchAndDisplayGlobalData();
+  } else {
+    //console.log("GLOBAL TOGGLE ACTIVE");
+  }
+}
+
+
 
 /*
  *  Defines the style of the country when the mouse hovers over it.
@@ -669,6 +711,8 @@ function resetHighlight(e) {
 
   if (layer.options.className != "selected") {
     geojson.resetStyle(layer);
+  } else {
+    layer.setStyle(selectedStyle);
   }
 }
 
@@ -851,6 +895,7 @@ geojson.eachLayer(function (layer) {
     addingButtons();
     currentlySelectedCountry = countryName; // We need to set this when a country is clicked in case we switch tabs.
     fetchAndDisplayCountryData(countryName);
+    deselectGlobalToggleButton();
   });
   // map.setView([layer.feature.properties.label_y, layer.feature.properties.label_x], 12);
 });
@@ -908,6 +953,7 @@ $(function recallCountry() {
 topTracksButton.on("click", topTracksOnClick);
 topArtistsButton.on("click", topArtistsOnClick);
 $(".pagination-link").on("click", paginationButtonOnClick);
+globalToggleButton.on("click", globalToggleButtonOnClick);
 
 //fn to get anything form local storage and display the previous load's selections
 function buttonOnRefresh() {

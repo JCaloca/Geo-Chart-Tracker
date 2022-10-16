@@ -20,10 +20,26 @@ main {
 #chart {
     position: absolute;
 
+    min-width: 400px;
+
     top: 0;
     right: 0;
 
     z-index: 651;
 
     transform: translate(-1em, 1em);
+}
+
+#global-toggle ul {
+    height: 100%;
+
+    border-bottom: 1px solid lightgrey;
+}
+
+#global-toggle ul li {
+    height: 100%;
+}
+
+#global-toggle ul li a {
+    height: 100%;
 }
