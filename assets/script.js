@@ -630,8 +630,6 @@ function generateTrackTablePage(pageIndex) {
   for (var i = startIndex; i < endIndex + startIndex; i++) {
     var trackRow = document.createElement("tr");
 
-    console.log(window.matchMedia("(max-width: 500px)"));
-
     if (!window.matchMedia("(max-width: 500px)").matches) {
       trackRow.innerHTML =
         "<th>" +
