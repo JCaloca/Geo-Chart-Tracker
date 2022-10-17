@@ -1,4 +1,12 @@
-# Global Top Chart
+# Geo Chart Tracker
+
+<img 
+    style="display: block; 
+           margin-left: auto;
+           margin-right: auto;
+           width: 133px;"
+    src="./assets/images/z-landing.gif">
+</img>
 
 <https://jcaloca.github.io/Global-Top-Charts>
 
@@ -15,13 +23,13 @@
 
 ## Desktop demo:           
 
-![Work Day Scheduler Desktop Demo](./assets/images/global-top-chart--desktop-demo.gif)
+![Geo Chart Tracker Demo](./assets/images/demo.gif)
 
 ------------------------------------------------------
 
 ## Mobile demo:                    
 
-![Work Day Scheduler Mobile Demo](./assets/images/global-top-chart-mobile-demo.gif)
+![Mobile demo](./assets/images/mobile.gif)
 
 ------------------------------------------------------
 
@@ -49,6 +57,7 @@ Navigate to: <https://jcaloca.github.io/Global-Top-Charts>
 - [Bulma CSS](https://bulma.io/)
 - [jQuery](https://jquery.com/)
 - [JavaScript](https://www.javascript.com/)
+- [LordIcon](https://lordicon.com/)
 - CSS
 - HTML
 
@@ -64,7 +73,9 @@ Navigate to: <https://jcaloca.github.io/Global-Top-Charts>
 ## Authors
 
 Mari Ma
-- [Github](https://github.com/DraconMarius)
+[<img src="https://cdn.icon-icons.com/icons2/2351/PNG/512/logo_github_icon_143196.png" alt='github' height='40'>](https://github.com/DraconMarius) [<img src="https://cdn.icon-icons.com/icons2/2351/PNG/512/logo_linkedin_icon_143191.png" alt='linkedin' height='40'>](https://www.linkedin.com/in/mari-ma-70771585/)  
+
+[Icon credit @ Anton Kalashnyk](https://icon-icons.com/users/14quJ7FM9cYdQZHidnZoM/icon-sets/)
 
 Preston Ramsey
 - [Github](https://github.com/PRamsey02)
