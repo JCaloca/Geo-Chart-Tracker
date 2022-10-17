@@ -1,6 +1,10 @@
+* {
+  box-sizing: border-box;
+}
+
 html {
   overflow-y: auto;
-  width: 103%;
+  /* width: 100%; */
   background: linear-gradient(to right,
       rgba(232, 242, 255, 0.902),
       rgba(78, 97, 195, 0.84),
@@ -10,7 +14,7 @@ html {
 main {
   font-family: "Poppins", sans-serif;
   position: relative;
-  width: 100vw;
+  width: 100%;
 }
 
 #map {
@@ -100,7 +104,7 @@ h1 {
 }
 
 #footer {
-  width: 103%;
+  width: 100%;
 }
 
 #footer p {
