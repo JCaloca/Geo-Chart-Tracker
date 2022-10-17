@@ -280,6 +280,11 @@ function displayTopTracks(pageIndex) {
 function fetchArtistImageURL(artistName, imageElement) {
   artistName = artistName.replace("'", "%27"); // Fixes Guns N' Roses not displaying correctly
 
+  // Hardcoded fix for AC/DC
+  if (artistName === "AC/DC") {
+    artistName = "ACDC";
+  }
+
   var url =
     "https://rest.bandsintown.com/artists/" +
     artistName +
