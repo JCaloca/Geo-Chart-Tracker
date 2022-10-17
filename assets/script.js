@@ -541,16 +541,29 @@ function generateArtistTablePage(pageIndex) {
   for (var i = startIndex; i < startIndex + endIndex; i++) {
     var artistRow = document.createElement("tr");
 
-    artistRow.innerHTML =
-      "<th>" +
-      (i + 1) +
-      "</th> <td> <p>" +
-      topArtistList.artist[i].name +
-      "</p> </td>";
+    if (!window.matchMedia("(max-width: 500px)").matches) {
+      artistRow.innerHTML =
+        "<th>" +
+        (i + 1) +
+        "</th> <td> <p>" +
+        topArtistList.artist[i].name +
+        "</p> </td>";
+    } else {
+      artistRow.innerHTML =
+        "<th class=\"p-1\">" +
+        (i + 1) +
+        "</th> <td class=\"p-1\"> <p>" +
+        topArtistList.artist[i].name +
+        "</p> </td>";
+    }
+
     artistRow.setAttribute("data-artist", "Top-" + (i + 1));
 
     var artistName = topArtistList.artist[i].name;
     var dataCell = document.createElement("td");
+    if (window.matchMedia("(max-width: 500px)").matches) {
+      $(dataCell).addClass("p-1");
+    }
     artistRow.appendChild(dataCell);
 
     /* Link the image to the last.fm artist page. */
@@ -617,21 +630,39 @@ function generateTrackTablePage(pageIndex) {
   for (var i = startIndex; i < endIndex + startIndex; i++) {
     var trackRow = document.createElement("tr");
 
-    trackRow.innerHTML =
-      "<th>" +
-      (i + 1) +
-      " </th> <td> <p>  " +
-      trackData.tracks.track[i].artist.name +
-      " - <a href=\"" +
-      trackData.tracks.track[i].url +
-      "\" target=\"_blank\">" +
-      trackData.tracks.track[i].name +
-      "</a> </p> </td>";
+    console.log(window.matchMedia("(max-width: 500px)"));
+
+    if (!window.matchMedia("(max-width: 500px)").matches) {
+      trackRow.innerHTML =
+        "<th>" +
+        (i + 1) +
+        " </th> <td> <p>  " +
+        trackData.tracks.track[i].artist.name +
+        " - <a href=\"" +
+        trackData.tracks.track[i].url +
+        "\" target=\"_blank\">" +
+        trackData.tracks.track[i].name +
+        "</a> </p> </td>";
+    } else {
+      trackRow.innerHTML =
+        "<th class=\"p-1\">" +
+        (i + 1) +
+        " </th> <td class=\"p-1\"> <p>  " +
+        trackData.tracks.track[i].artist.name +
+        " - <a href=\"" +
+        trackData.tracks.track[i].url +
+        "\" target=\"_blank\">" +
+        trackData.tracks.track[i].name +
+        "</a> </p> </td>";
+    }
 
     trackRow.setAttribute("data-track", "Top-" + (i + 1));
 
     var artistName = trackData.tracks.track[i].artist.name;
     var dataCell = document.createElement("td");
+    if (window.matchMedia("(max-width: 500px)").matches) {
+      $(dataCell).addClass("p-1");
+    }
     trackRow.appendChild(dataCell);
 
     /* Link the image to the last.fm artist page. */
@@ -801,6 +832,7 @@ function resizeForDesktop() {
   globalToggleElement.removeClass("is-small");
   chartToggElement.removeClass("is-small");
   paginationElement.removeClass("is-small");
+  chartDrawer.removeClass("px-3");
 
   $("th").removeClass("p-1");
   $("td").removeClass("p-1");
@@ -812,6 +844,7 @@ function resizeForMobile() {
   globalToggleElement.addClass("is-small");
   chartToggElement.addClass("is-small");
   paginationElement.addClass("is-small");
+  chartDrawer.addClass("px-3");
 
   $("th").addClass("p-1");
   $("td").addClass("p-1");
