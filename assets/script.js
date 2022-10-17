@@ -326,6 +326,8 @@ function fetchAndDisplayCountryData(countryName) {
   /* 3. Reset the pagination links as we have new data. */
   resetPaginationLinks();
 
+  resetGlobalToggle();
+
   /* 4. We'll fetch both the top track and top artist data. */
   let first = fetchCountryTopTracks(countryName);
   let second = fetchCountryTopArtists(countryName);
@@ -782,6 +784,13 @@ function resetPaginationLinks() {
   firstPaginationLinkElement.addClass("is-current");
 }
 
+/* Resets the global toggle if it is active. */
+function resetGlobalToggle() {
+  if (globalToggleButton.parent().is(".is-active")) {
+    globalToggleButton.parent().removeClass("is-active");
+  }
+}
+
 /*
  *  Iterates through all of the features on the map and sets the feature as selected when layer.feature.properties.name_long matches
  *  the input string countryName.
@@ -793,7 +802,9 @@ function setCountryAsSelectedAndStyle(countryName) {
        *  Now that we have the match, we need to set the style to the selected style, reset the style and state of the currently selected country,
        *  and set the currentlySelectedFeature to this feature.
        */
-      geojson.resetStyle(currentlySelectedFeature);
+      if (currentlySelectedFeature) {
+        geojson.resetStyle(currentlySelectedFeature);
+      }
       layer.setStyle(selectedStyle);
       currentlySelectedFeature = layer;
     }
@@ -1048,6 +1059,7 @@ geojson = L.geoJson(countriesDATA, {
 geojson.eachLayer(function (layer) {
   layer.on("click", function (e) {
     //adding leaflet event to zoom in at the countries
+
     map.setView(
       [layer.feature.properties.label_y, layer.feature.properties.label_x],
       4
