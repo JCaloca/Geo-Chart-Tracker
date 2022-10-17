@@ -671,6 +671,7 @@ function globalToggleButtonOnClick(event) {
     /* 5. Zoom out on the map to the global view. */
     zoomToGlobe();
 
+
     /* 6. Fetch and display the global top charts. */
     fetchAndDisplayGlobalData();
   }
@@ -991,8 +992,10 @@ function zoomToGlobe() {
 
 map = L.map("map", {
   center: [0, 0],
-  maxZoom: 5
+  maxZoom: 5,
+  minZoom: 2,
 });
+map.setView([0, 0], 3);
 map.setMaxBounds([
   [-85.0511, -180],
   [85.0511, 180]
@@ -1019,8 +1022,8 @@ var positron = L.tileLayer(
     attribution: "©OpenStreetMap, ©CartoDB",
     continuousWorld: false,
     // noWrap: true, would stop tiling but throws error when panning
-    // Bounds: [[-85.0511, -180], [85.0511, 180]],
-    // maxZoom: 4
+    Bounds: [[-85.0511, -180], [85.0511, 180]],
+    maxZoom: 4
   }
 ).addTo(map);
 
@@ -1031,8 +1034,8 @@ var positronLabels = L.tileLayer(
     attribution: "©OpenStreetMap, ©CartoDB",
     continuousWorld: false,
     // noWrap: true,
-    // Bounds: [[-85.0511, -180], [85.0511, 180]],
-    // maxZoom: 4,
+    Bounds: [[-85.0511, -180], [85.0511, 180]],
+    maxZoom: 4,
     pane: "labels",
   }
 ).addTo(map);
