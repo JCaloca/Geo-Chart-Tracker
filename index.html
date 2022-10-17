@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0
+  <meta name="viewport" content="width=device-width, initial-scale=0.5
     maximum-scale=1.0, user-scalable=no" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,24 +19,24 @@
 </head>
 
 <body>
-  <header class="is-flex is-justify-content-center is-align-items-center">
-    <lord-icon src="https://cdn.lordicon.com/oghxgbxh.json" trigger="boomerang"
-      colors="primary:#fca943,secondary:#c2415f" stroke="85" axis-y="33" style="width: 50px; height: 50px">
+  <header class="pl-5 mb-0 columns is-flex is-justify-content-center is-align-items-center is-centered">
+    <lord-icon class="column is-quarter-mobile" src="https://cdn.lordicon.com/oghxgbxh.json" trigger="boomerang"
+      colors="primary:#fca943,secondary:#c2415f" stroke="85" style="width: 100px; height: 100px">
     </lord-icon>
-    <h1 class="title is-1 has-text-weight-bold has-text-white">
+    <h1 class="mb-0 title column has-text-weight-bold has-text-white is-half-mobile is-centered">
       Geo Chart Tracker
     </h1>
-    <lord-icon src="https://cdn.lordicon.com/uqcojfcp.json" trigger="boomerang"
-      colors="primary:#4be1ec,secondary:#cb5eee" stroke="80" axis-y="33" style="width: 50px; height: 50px">
+    <lord-icon class="column is-quarter-mobile" src="https://cdn.lordicon.com/uqcojfcp.json" trigger="boomerang"
+      colors="primary:#4be1ec,secondary:#cb5eee" stroke="80" style="width: 100px; height: 100px">
     </lord-icon>
   </header>
 
   <!-- The map and charts are wrapped in main to be able to easily position the charts over the map -->
   <main>
-    <section id="chart" class="card column">
-      <div id="toggle-bar" class="columns mb-0">
+    <section id="chart" class="card column is-one-quarter-mobile py-0">
+      <div id="toggle-bar" class="columns mb-0 is-mobile">
         <div id="toggle" class="tabs is-boxed m-0 pr-0 pb-0 column is-8 is-mobile is-centered">
-          <ul clss="column">
+          <ul clss="column is-mobile">
             <li class="is-active">
               <a id="top-tracks-button">
                 <span class="icon is-small"><i class="fa-solid fa-record-vinyl" aria-hidden="true"></i></span>
@@ -53,7 +53,7 @@
         </div>
         <!-- Toggles are supposed to be used with a set of mutually exclusive options, but I like the style and I will use it here anyway. -->
         <div id="global-toggle" class="tabs is-toggle p-0 m-0 column is-2 is-mobile is-centered">
-          <ul class="column">
+          <ul class="column is-mobile">
             <li class="is-active">
               <a id="global-toggle-button">
                 <span class="icon is-small"><i class="fa-solid fa-globe"></i></span>
@@ -66,7 +66,7 @@
           <ul>
             <li>
               <a id="visBtn">
-                <span class="icon is-small is-centered mt-1"><i class="fa-solid fa-xmark"></i>
+                <span class="icon is-small is-mobile is-centered mt-1"><i class="fa-solid fa-xmark"></i>
                 </span>
               </a>
             </li>
@@ -75,14 +75,14 @@
       </div>
       <div class="card-content py-1" data-vis="max" id="chartDrawer">
         <h2 id="chart-header" class="is-size-3 has-text-weight-bold pb-2"></h2>
-        <table id="chart-table" class="table is-flex is-justify-content-center is-hoverable">
+        <table id="chart-table" class="table is-flex is-justify-content-center is-hoverable mb-0">
           <thead id="chart-table-header">
             <tr>
               <th><abbr title="Position"></abbr></th>
             </tr>
           </thead>
         </table>
-        <nav class="pagination is-centered mt-3 mb-0" role="navigation" aria-label="pagination">
+        <nav class="pagination is-centered m-0" role="navigation" aria-label="pagination">
           <ul class="pagination-list">
             <li>
               <a id="page-1" class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
@@ -103,12 +103,12 @@
         </nav>
       </div>
     </section>
-    <div id="map"></div>
+    <div id="map" class="ml-3 mt-0 "></div>
     <!-- added hard coded bulma modal, default hidden -->
     <div id="alert" class="modal">
       <div class="modal-background"></div>
       <!-- //error icon -->
-      <lord-icon src="https://cdn.lordicon.com/bmnlikjh.json" trigger="loop" delay="2000" colors="primary:#c2415f"
+      <lord-icon src="https://cdn.lordicon.com/bmnlikjh.json" trigger="loop" delay="1800" colors="primary:#c2415f"
         state="hover-1" style="width: 250px; height: 250px">
       </lord-icon>
       <!-- special container to put our message -->
@@ -117,9 +117,9 @@
     </div>
   </main>
 
-  <footer class="footer columns custom-footer">
-    <section class="container column is-6">
-      <div class="block" id="search-history"></div>
+  <footer class="footer columns custom-footer pb-0 pt-2">
+    <section class="container column is-6 pb-0">
+      <div class="columns is-centered is-mobile" id="search-history"></div>
       <div class="columns is-centered is-mobile" id="delete-container">
         <button class="button is-normal is-dark" id="delete-history">
           Delete History
@@ -129,7 +129,8 @@
     <div class="content has-text-centered column is-6">
       <div class="block">
         <p class="is-size-5">
-          Geo Chart Tracker by: <br /><a href="https://github.com/DraconMarius" target="_blank">Mari Ma</a>,
+          Geo Chart Tracker by: <br />
+          <a href="https://github.com/DraconMarius" target="_blank">Mari Ma</a>,
           <a href="https://github.com/PRamsey02" target="_blank">Preston Ramsey</a>,
           <a href="https://github.com/JCaloca" target="_blank">Jacob Caloca</a>,
           <a href="https://github.com/GeminiAd" target="_blank">Adam Ferro</a>

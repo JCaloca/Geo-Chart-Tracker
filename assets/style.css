@@ -3,12 +3,13 @@ main {
 }
 
 #map {
-  height: 900px;
+  height: 630px;
   width: 100vw;
+  /* position: -100px; */
 }
 
 header {
-  height: 100px;
+  /* height: 100px; */
   background: linear-gradient(to right,
       rgba(232, 242, 255, 0.902),
       rgba(78, 97, 195, 0.84),
@@ -16,6 +17,7 @@ header {
 }
 
 h1 {
+  text-align: center;
   height: max-content;
   font-weight: bolder;
   /* //surprised this works with Google fonts */
@@ -30,6 +32,7 @@ h1 {
 
 main {
   position: relative;
+  width: 100vw;
 }
 
 #chart {
@@ -37,10 +40,12 @@ main {
 
   position: absolute;
 
-  min-width: 400px;
+  min-width: 500px;
 
-  top: 0;
-  right: 0;
+  top: -10px;
+  right: -20px;
+
+  marigin-left: 5px;
 
   z-index: 651;
 
