@@ -1,11 +1,18 @@
 var chartTableHeaderElement = $("#chart-table-header");
 var chartHeaderElement = $("#chart-header");
+var chartToggElement = $("#chart-togg");
+var toggleElement = $("#toggle");
 var topTracksButton = $("#top-tracks-button");
 var topArtistsButton = $("#top-artists-button");
 var firstPaginationLinkElement = $("#page-1");
 var globalToggleButton = $("#global-toggle-button");
+var globalToggleElement = $("#global-toggle");
 var visBtn = $("#visBtn");
 var chartDrawer = $("#chartDrawer");
+var chartTableElement = $("#chart-table");
+var paginationElement = $(".pagination");
+
+var lastWidth = window.innerWidth;
 
 /* I stole this link from one of those placeholder image URLs Last.fm sends as an artist image. */
 const placeHolderImageURL = "https://lastfm.freetls.fastly.net/i/u/174s/2a96cbd8b46e442fc41c2b86b821562f.png";
@@ -164,7 +171,6 @@ function displayTopArtists(pageIndex) {
       var errorBtn = document.getElementById(countryName);
       if (e.target.id === "close") {
         modal.classList.remove("is-active");
-        console.log("AlertClosed");
         mapCont.classList.remove("is-invisible");
         charts.classList.remove("is-invisible");
         //chaning error city button to red on modal close
@@ -178,7 +184,6 @@ function displayTopArtists(pageIndex) {
     if (global) {
       chartHeaderElement.text(regionText + " Artists:"); // This is a jQuery Object, not a regular DOM element.
     } else {
-      //console.log(trackData.tracks.track.length);
 
       var artistList;
       if (global) {
@@ -238,7 +243,6 @@ function displayTopTracks(pageIndex) {
       var errorBtn = document.getElementById(countryName);
       if (e.target.id === "close") {
         modal.classList.remove("is-active");
-        console.log("AlertClosed");
         mapCont.classList.remove("is-invisible");
         charts.classList.remove("is-invisible");
         errorBtn.classList.remove("is-primary");
@@ -251,7 +255,6 @@ function displayTopTracks(pageIndex) {
     if (global) {
       chartHeaderElement.text(regionText + " Tracks:"); // This is a jQuery Object, not a regular DOM element.
     } else {
-      //console.log(trackData.tracks.track.length);
       if (trackData.tracks.track.length) {
         chartHeaderElement.text("Top Tracks " + regionText);
       } else {
@@ -408,7 +411,6 @@ function fetchCountryTopArtists(countryName) {
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
 
       artistData = data;
     });
@@ -439,7 +441,6 @@ function fetchCountryTopTracks(countryName) {
       return response.json();
     })
     .then(function (data) {
-      //console.log(data);
 
       trackData = data;
     });
@@ -466,7 +467,6 @@ function fetchGlobalTopArtists() {
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
 
       artistData = data;
     });
@@ -701,7 +701,6 @@ function hidePaginationLink(pageIndex) {
  *  Defines the style of the country when the mouse hovers over it.
  */
 function highlightCountry(e) {
-  //console.log(e.target);
   var layer = e.target;
 
   layer.setStyle({
@@ -794,6 +793,28 @@ function resetGlobalToggle() {
   if (globalToggleButton.parent().is(".is-active")) {
     globalToggleButton.parent().removeClass("is-active");
   }
+}
+
+/* Sizes the chart for desktop. */
+function resizeForDesktop() {
+  toggleElement.removeClass("is-small");
+  globalToggleElement.removeClass("is-small");
+  chartToggElement.removeClass("is-small");
+  paginationElement.removeClass("is-small");
+
+  $("th").removeClass("p-1");
+  $("td").removeClass("p-1");
+}
+
+/* Sizes the chart for mobile. */
+function resizeForMobile() {
+  toggleElement.addClass("is-small");
+  globalToggleElement.addClass("is-small");
+  chartToggElement.addClass("is-small");
+  paginationElement.addClass("is-small");
+
+  $("th").addClass("p-1");
+  $("td").addClass("p-1");
 }
 
 /*
@@ -1109,7 +1130,6 @@ function addingButtons() {
     var existsButton = document.getElementById(countryName);
     existsButton.classList.remove("is-primary");
     existsButton.classList.add("is-warning");
-    console.log("test");
   }
 }
 
@@ -1117,7 +1137,6 @@ function addingButtons() {
 $(function recallCountry() {
   var searchHistory = document.getElementById("search-history");
   $(searchHistory).on("click", ".recall", function () {
-    console.log(this.id);
     countryName = this.id;
 
     /*
@@ -1126,10 +1145,8 @@ $(function recallCountry() {
     setCountryAsSelectedAndStyle(countryName);
     this.classList.remove("is-primary");
     this.classList.add("is-warning");
-    console.log(countryName);
     var previousCountry = localStorage.getItem(countryName);
     var coordinates = previousCountry.split(",");
-    console.log(coordinates);
     map.setView([coordinates[0], coordinates[1]], 4);
     fetchAndDisplayCountryData(countryName);
   });
@@ -1189,5 +1206,26 @@ $(function deleteStorage() {
     $(searchHistory).empty();
   });
 });
+
+/* Below is a quick fix to decrease the size of the tabs and image when we are on mobile */
+window.addEventListener('load', (event) => {
+  if (window.matchMedia("(max-width: 500px)").matches) {
+    resizeForMobile();
+  }
+});
+
+window.addEventListener('resize', () => {
+  if (window.matchMedia("(max-width: 500px)").matches) {
+    if (lastWidth > 500) {
+      resizeForMobile();
+    }
+  } else {
+    if (lastWidth <= 500) {
+      resizeForDesktop();
+    }
+  }
+  lastWidth = window.innerWidth;
+});
+
 
 fetchAndDisplayGlobalData();

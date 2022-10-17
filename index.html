@@ -33,9 +33,9 @@
 
   <!-- The map and charts are wrapped in main to be able to easily position the charts over the map -->
   <main>
-    <section id="chart" class="card column is-one-quarter-mobile py-0">
+    <section id="chart" class="card py-0">
       <div id="toggle-bar" class="columns mb-0 is-mobile">
-        <div id="toggle" class="tabs is-boxed m-0 pr-0 pb-0 column is-8 is-mobile is-centered">
+        <div id="toggle" class="tabs is-boxed m-0 pr-0 pb-0 column is-8 is-centered">
           <ul clss="column is-mobile">
             <li class="is-active">
               <a id="top-tracks-button">
@@ -53,7 +53,7 @@
         </div>
         <!-- Toggles are supposed to be used with a set of mutually exclusive options, but I like the style and I will use it here anyway. -->
         <div id="global-toggle" class="tabs is-toggle p-0 m-0 column is-2 is-mobile is-centered">
-          <ul class="column is-mobile">
+          <ul class="column is-mobile pb-0">
             <li class="is-active">
               <a id="global-toggle-button">
                 <span class="icon is-small"><i class="fa-solid fa-globe"></i></span>
@@ -75,14 +75,14 @@
       </div>
       <div class="card-content py-1" data-vis="max" id="chartDrawer">
         <h2 id="chart-header" class="has-text-weight-bold pb-2"></h2>
-        <table id="chart-table" class="table is-flex is-justify-content-center is-hoverable mb-0">
+        <table id="chart-table" class="table is-flex is-justify-content-center is-hoverable pb-0 mb-2">
           <thead id="chart-table-header">
             <tr>
               <th><abbr title="Position"></abbr></th>
             </tr>
           </thead>
         </table>
-        <nav class="pagination is-centered m-0" role="navigation" aria-label="pagination">
+        <nav class="pagination is-centered p-1" role="navigation" aria-label="pagination">
           <ul class="pagination-list">
             <li>
               <a id="page-1" class="pagination-link is-current" aria-label="Page 1" aria-current="page">1</a>
@@ -121,7 +121,7 @@
     <section class="container column is-6 pb-0">
       <div class="is-flex is-justify-content-center is-flex-wrap-wrap is-mobile" id="search-history"></div>
       <div class="is-flex is-justify-content-center is-mobile" id="delete-container">
-        <button class="button is-normal is-dark is-align-self-auto" id="delete-history">
+        <button class="button is-normal is-responsive is-dark is-align-self-auto" id="delete-history">
           Delete History
         </button>
       </div>

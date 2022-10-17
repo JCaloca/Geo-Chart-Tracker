@@ -4,7 +4,6 @@
 
 html {
   overflow-y: auto;
-  /* width: 100%; */
   background: linear-gradient(to right,
       rgba(232, 242, 255, 0.902),
       rgba(78, 97, 195, 0.84),
@@ -18,7 +17,7 @@ main {
 }
 
 #map {
-  height: 630px;
+  height: 700px;
   width: 100%;
 }
 
@@ -54,15 +53,13 @@ h1 {
   top: -10px;
   right: -20px;
 
-  z-index: 651;
+  z-index: 652;
 
   transform: translate(-1em, 1em);
 }
 
 #global-toggle ul {
-  height: 110%;
-
-  border-bottom: 1px solid lightgrey;
+  height: 100%;
 }
 
 #global-toggle ul li {
@@ -149,8 +146,33 @@ h1 {
   font-size: 30px;
 }
 
-@media (max-width: 520px) {
+img {
+  min-width: 24px;
+}
+
+@media (max-width: 500px) {
+  #map {
+    height: 630px;
+  }
+
+  #global-toggle ul {
+    height: 100%;
+  }
+
   #chart-header {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  #chart {
+    min-width: 350px;
+    width: 350px;
+  }
+
+  th {
+    font-size: 14px;
+  }
+
+  p {
+    font-size: 14px;
   }
 }
