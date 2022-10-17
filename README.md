@@ -29,7 +29,8 @@
 
 ## Mobile demo:                    
 
-![Mobile demo](./assets/images/mobile.gif)
+[<img src="./assets/images/mobile.gif" alt='mobile-demo' height='333'>]()
+
 
 ------------------------------------------------------
 
@@ -59,6 +60,7 @@ Pan around the map, zoom in, and click some countries.
 - [Bulma CSS](https://bulma.io/)
 - [jQuery](https://jquery.com/)
 - [JavaScript](https://www.javascript.com/)
+- [GoogleFont](https://fonts.google.com/)
 - [LordIcon](https://lordicon.com/)
 - CSS
 - HTML
@@ -75,7 +77,8 @@ Pan around the map, zoom in, and click some countries.
 ## Authors
 
 Mari Ma
-[<img src="https://cdn.icon-icons.com/icons2/2351/PNG/512/logo_github_icon_143196.png" alt='github' height='40'>](https://github.com/DraconMarius) [<img src="https://cdn.icon-icons.com/icons2/2351/PNG/512/logo_linkedin_icon_143191.png" alt='linkedin' height='40'>](https://www.linkedin.com/in/mari-ma-70771585/)  
+
+[<img src="https://cdn.icon-icons.com/icons2/2351/PNG/512/logo_github_icon_143196.png" alt='github' height='33'>](https://github.com/DraconMarius) [<img src="https://cdn.icon-icons.com/icons2/2351/PNG/512/logo_linkedin_icon_143191.png" alt='linkedin' height='33'>](https://www.linkedin.com/in/mari-ma-70771585/)  
 
 [Icon credit @ Anton Kalashnyk](https://icon-icons.com/users/14quJ7FM9cYdQZHidnZoM/icon-sets/)
 
