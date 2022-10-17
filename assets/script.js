@@ -669,8 +669,8 @@ function globalToggleButtonOnClick(event) {
     currentlySelectedFeature = null;
 
     /* 5. Zoom out on the map to the global view. */
-    map.fitWorld();
-    map.setView([0, 0], 8); //added zoom level in global view
+    zoomToGlobe();
+
 
     /* 6. Fetch and display the global top charts. */
     fetchAndDisplayGlobalData();
@@ -985,6 +985,11 @@ function topTracksOnClick(event) {
   }
 }
 
+/* Zooms to the center of the Earth, where all countries should be visible. */
+function zoomToGlobe() {
+  map.setView([0, 0], 2);
+}
+
 map = L.map("map", {
   center: [0, 0],
   maxZoom: 5,
@@ -993,9 +998,9 @@ map = L.map("map", {
 map.setView([0, 0], 3);
 map.setMaxBounds([
   [-85.0511, -180],
-  [85.0511, 180],
+  [85.0511, 180]
 ]);
-map.fitWorld();
+zoomToGlobe();
 map.createPane("labels");
 map.getPane("labels").style.zIndex = 650; //always in the front
 map.getPane("labels").style.pointerEvents = "none";
@@ -1074,12 +1079,12 @@ function addingButtons() {
     saveButton.classList.add(
       "recall",
       "button",
-      "is-primary",
+      "purple",
       "is-rounded",
       "is-normal",
       "is-responsive",
-      "mt-3",
-      "mb-3",
+      "mt-1",
+      "mb-1",
       "mx-1"
     );
     searchHistory.append(saveButton);
@@ -1104,6 +1109,7 @@ $(function recallCountry() {
     setCountryAsSelectedAndStyle(countryName);
     this.classList.remove("is-primary");
     this.classList.add("is-warning");
+    console.log(countryName);
     var previousCountry = localStorage.getItem(countryName);
     var coordinates = previousCountry.split(",");
     console.log(coordinates);
@@ -1144,12 +1150,12 @@ function buttonOnRefresh() {
       saveButton.classList.add(
         "recall",
         "button",
-        "is-primary",
+        "purple",
         "is-rounded",
         "is-normal",
         "is-responsive",
-        "mt-3",
-        "mb-3",
+        "mt-1",
+        "mb-1",
         "mx-1"
       );
       searchHistory.append(saveButton);
