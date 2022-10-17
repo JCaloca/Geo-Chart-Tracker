@@ -29,7 +29,7 @@
 
 ## Mobile demo:                    
 
-[<img src="./assets/images/mobile.gif" alt='mobile-demo' height='333'>]()
+[<img src="./assets/images/mobile.gif" alt='mobile-demo' height='333' width='153'>]()
 
 
 ------------------------------------------------------
