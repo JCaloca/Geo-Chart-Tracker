@@ -8,7 +8,7 @@
     src="./assets/images/z-landing.gif">
 </img>
 
-<https://jcaloca.github.io/Global-Top-Charts>
+<https://jcaloca.github.io/Global-Top-Tracker>
 
 ------------------------------------------------------
 
@@ -46,7 +46,9 @@ As soon as you navigate to the application, the global top tracks are displayed.
 
 ## Usage
 
-Navigate to: <https://jcaloca.github.io/Global-Top-Charts>
+Navigate to: <https://jcaloca.github.io/Global-Top-Tracker>
+
+Pan around the map, zoom in, and click some countries.
 
 
 ## Technologies Used
